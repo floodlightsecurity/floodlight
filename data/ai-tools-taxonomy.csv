@@ -1,0 +1,87 @@
+tool_name,primary_domain,category,risk_score,risk_band,trains_on_input_default,has_enterprise_tier,hosting_region,gdpr_safe_default,certifications,data_retention_notes,notes
+ChatGPT (Free/Plus),chatgpt.com,LLM_CHAT,7,HIGH,yes,yes,US,no,SOC2-Type2,30 days for abuse review; chats may be used for training,Free and Plus tiers train by default unless opted out in Settings; data goes to OpenAI US infrastructure
+ChatGPT Team,chatgpt.com,LLM_CHAT,3,LOW,no,yes,US,conditional,SOC2-Type2;CSA-STAR,Not used for training; admin retention controls,Workspace-bound; SAML SSO; admin console
+ChatGPT Enterprise,chatgpt.com,LLM_CHAT,2,LOW,no,yes,multi,yes,SOC2-Type2;CSA-STAR;ISO27001,Custom retention; encrypted at rest,Enterprise-grade with DPA; SCIM; data residency options
+Claude.ai (Free/Pro),claude.ai,LLM_CHAT,3,LOW,no,yes,US,conditional,SOC2-Type2;HIPAA-eligible,30 days unless flagged for safety,Anthropic does not train on user inputs by default; opt-in only
+Claude for Work,claude.ai,LLM_CHAT,2,LOW,no,yes,multi,yes,SOC2-Type2;ISO27001;HIPAA-eligible,Configurable retention,Team and Enterprise plans; SSO; admin controls
+Google Gemini (Consumer),gemini.google.com,LLM_CHAT,6,MEDIUM,configurable,yes,US,no,SOC2;ISO27001,Up to 18 months by default,Consumer Gemini may use conversations for product improvement; can disable Gemini Apps Activity
+Gemini for Workspace,workspace.google.com,LLM_CHAT,3,LOW,no,yes,multi,yes,SOC2;ISO27001;ISO27017;ISO27018,Bound to Workspace retention,Does not use enterprise data to train models; covered by Workspace DPA
+Microsoft Copilot (Consumer),copilot.microsoft.com,LLM_CHAT,6,MEDIUM,configurable,yes,US,no,SOC2;ISO27001,Varies by account type,Consumer version different from M365 Copilot
+Microsoft 365 Copilot,microsoft.com/copilot,EMBEDDED,3,LOW,no,yes,multi,yes,SOC2;ISO27001;HIPAA-BAA,Bound to M365 retention,Enterprise-grade; data stays within tenant boundary
+Perplexity AI,perplexity.ai,SEARCH,6,MEDIUM,configurable,yes,US,no,SOC2,Queries retained for service improvement,Enterprise tier offers no-training and SOC2; consumer tier retains
+Pi.ai,pi.ai,LLM_CHAT,7,HIGH,yes,no,US,no,none-public,Indefinite retention,Companion AI; emotional/personal content commonly shared
+Character.AI,character.ai,LLM_CHAT,9,CRITICAL,yes,no,US,no,none-public,Indefinite,Persona chats; high PII risk; teen-targeted; documented safety incidents
+HuggingChat,huggingface.co,LLM_CHAT,5,MEDIUM,configurable,no,multi,conditional,SOC2,Configurable,Open-source models; depends on chosen model and hosting
+Mistral Le Chat,chat.mistral.ai,LLM_CHAT,3,LOW,no,yes,EU,yes,SOC2;ISO27001,Configurable,EU-hosted (France); GDPR-native
+DeepSeek,chat.deepseek.com,LLM_CHAT,9,CRITICAL,yes,no,CN,no,none-public,Per Chinese law,Hosted in China; subject to PRC data laws; corporate use strongly discouraged in regulated sectors
+Qwen / Tongyi,chat.qwen.ai,LLM_CHAT,9,CRITICAL,yes,no,CN,no,none-public,Per Chinese law,Alibaba-hosted; same jurisdictional concerns as DeepSeek
+Kimi (Moonshot),kimi.moonshot.cn,LLM_CHAT,9,CRITICAL,yes,no,CN,no,none-public,Per Chinese law,Chinese-hosted LLM
+Groq,groq.com,LLM_CHAT,5,MEDIUM,configurable,yes,US,conditional,SOC2,Configurable,Inference platform; depends on configuration
+Poe,poe.com,LLM_CHAT,6,MEDIUM,yes,no,US,no,none-public,Up to 30 days,Quora-owned aggregator; routes to multiple model providers
+GitHub Copilot (Individual),github.com/features/copilot,CODE,6,MEDIUM,configurable,yes,US,conditional,SOC2;ISO27001,Snippets may be retained,Individual tier may use prompts; can opt out
+GitHub Copilot Business,github.com/features/copilot,CODE,2,LOW,no,yes,multi,yes,SOC2;ISO27001;ISO27018,Not retained,Does not retain prompts or use for training
+GitHub Copilot Enterprise,github.com/features/copilot,CODE,2,LOW,no,yes,multi,yes,SOC2;ISO27001;ISO27018,Not retained,Enterprise tier with knowledge base scoping
+Cursor,cursor.com,CODE,5,MEDIUM,configurable,yes,US,conditional,SOC2,Configurable,Privacy Mode available; Business tier stronger guarantees; default may send code to model providers
+Codeium / Windsurf,codeium.com,CODE,4,MEDIUM,no,yes,multi,conditional,SOC2,Configurable,Enterprise tier offers self-hosted; code not used for training in paid tiers
+Tabnine,tabnine.com,CODE,2,LOW,no,yes,multi,yes,SOC2;ISO27001,Configurable,Privacy-first positioning; on-prem option; no code retention
+Amazon Q Developer,aws.amazon.com/q,CODE,3,LOW,no,yes,multi,yes,SOC;ISO27001;HIPAA-BAA;FedRAMP,AWS-bound,Formerly CodeWhisperer; AWS-grade compliance
+Replit AI,replit.com,CODE,5,MEDIUM,configurable,yes,US,conditional,SOC2,Repls retained,Free tier code is public by default; Teams tier private
+Bolt.new,bolt.new,CODE,7,HIGH,yes,no,US,no,none-public,Sessions retained,Generates whole apps; prompts and generated code may be used for improvement
+v0 by Vercel,v0.dev,CODE,5,MEDIUM,configurable,yes,US,conditional,SOC2,Configurable,Generates UI; team plans available
+Lovable,lovable.dev,CODE,6,MEDIUM,yes,no,EU,conditional,none-public,Sessions retained,EU-hosted (Sweden); generates apps from prompts
+Phind,phind.com,CODE,5,MEDIUM,configurable,yes,US,no,none-public,Queries retained,AI search for developers
+Continue.dev,continue.dev,CODE,2,LOW,no,n/a,self-hosted,yes,n/a,Self-controlled,Open-source; runs locally; full control
+Midjourney,midjourney.com,IMAGE,6,MEDIUM,yes,yes,US,no,none-public,Public by default,Default plans show outputs publicly; Pro plan offers stealth mode
+DALL-E (via OpenAI),openai.com,IMAGE,5,MEDIUM,configurable,yes,US,conditional,SOC2-Type2,Per OpenAI plan,Same data policy as parent ChatGPT plan
+Stable Diffusion / Stability AI,stability.ai,IMAGE,4,MEDIUM,no,yes,multi,conditional,SOC2,Configurable,Self-hostable; commercial API has standard terms
+Adobe Firefly,firefly.adobe.com,IMAGE,2,LOW,no,yes,multi,yes,SOC2;ISO27001,Bound to Adobe DPA,Trained on licensed/public-domain content; commercial-safe positioning
+Leonardo.ai,leonardo.ai,IMAGE,5,MEDIUM,configurable,yes,multi,conditional,none-public,Configurable,Image generation platform
+Ideogram,ideogram.ai,IMAGE,5,MEDIUM,yes,yes,US,no,none-public,Public by default on free,Strong text rendering; free tier outputs public
+Recraft,recraft.ai,IMAGE,5,MEDIUM,yes,yes,US,conditional,none-public,Configurable,Vector and raster generation
+Krea,krea.ai,IMAGE,6,MEDIUM,yes,yes,US,no,none-public,Sessions retained,Real-time image generation
+Runway,runwayml.com,VIDEO,5,MEDIUM,configurable,yes,US,conditional,SOC2,Configurable,Video generation; Enterprise tier offers stronger controls
+Pika,pika.art,VIDEO,6,MEDIUM,yes,no,US,no,none-public,Sessions retained,Video generation; free tier outputs public
+Luma Dream Machine,lumalabs.ai,VIDEO,5,MEDIUM,configurable,yes,US,conditional,none-public,Configurable,Video generation
+Kling AI,klingai.com,VIDEO,9,CRITICAL,yes,no,CN,no,none-public,Per Chinese law,Hosted in China; same data sovereignty concerns
+HeyGen,heygen.com,VIDEO,5,MEDIUM,no,yes,US,conditional,SOC2;GDPR,Configurable,Avatar/talking-head videos; enterprise-friendly
+Synthesia,synthesia.io,VIDEO,3,LOW,no,yes,EU,yes,SOC2-Type2;ISO27001;GDPR,Configurable,UK-headquartered; enterprise-focused; strong compliance
+ElevenLabs,elevenlabs.io,AUDIO,5,MEDIUM,configurable,yes,US,conditional,SOC2-Type2,Configurable,Voice cloning; enterprise tier offers no-training
+Suno,suno.com,AUDIO,7,HIGH,yes,no,US,no,none-public,Public by default,Music generation; free tier outputs public; copyright concerns
+Udio,udio.com,AUDIO,7,HIGH,yes,no,US,no,none-public,Public by default,Music generation; same concerns as Suno
+Murf,murf.ai,AUDIO,4,MEDIUM,no,yes,US,conditional,SOC2;GDPR,Configurable,Text-to-speech; enterprise tier
+Descript,descript.com,AUDIO,4,MEDIUM,no,yes,US,conditional,SOC2;GDPR,Bound to subscription,Podcast/video editing with AI; transcripts retained
+Jasper,jasper.ai,WRITING,3,LOW,no,yes,US,yes,SOC2-Type2;GDPR,Configurable,Enterprise marketing copy; strong compliance posture
+Copy.ai,copy.ai,WRITING,4,MEDIUM,no,yes,US,conditional,SOC2;GDPR,Configurable,Marketing copy generation
+Writer,writer.com,WRITING,2,LOW,no,yes,multi,yes,SOC2-Type2;ISO27001;HIPAA-BAA,Configurable,Enterprise-only positioning; on-tenant LLM option
+Grammarly Free/Premium,grammarly.com,WRITING,5,MEDIUM,yes,yes,US,no,SOC2,Up to 36 months,Free/Premium tiers retain content for improvement
+Grammarly Business,grammarly.com,WRITING,3,LOW,no,yes,US,conditional,SOC2-Type2;HIPAA-BAA;GDPR,Configurable,Enterprise tier does not train on data
+QuillBot,quillbot.com,WRITING,5,MEDIUM,yes,yes,US,no,SOC2,Bound to subscription,Paraphrasing tool; owned by Course Hero/Learneo
+Wordtune,wordtune.com,WRITING,5,MEDIUM,configurable,yes,IL,conditional,SOC2;GDPR,Configurable,Israeli company; enterprise tier available
+You.com,you.com,SEARCH,5,MEDIUM,configurable,yes,US,conditional,SOC2,Queries retained,AI search; Pro tier
+Genspark,genspark.ai,SEARCH,6,MEDIUM,yes,no,US,no,none-public,Queries retained,Multi-agent search
+Otter.ai,otter.ai,MEETING,5,MEDIUM,no,yes,US,conditional,SOC2-Type2;HIPAA-BAA;GDPR,90+ days configurable,Auto-joins meetings; transcripts often shared widely; common shadow-IT entry point
+Fireflies.ai,fireflies.ai,MEETING,5,MEDIUM,no,yes,US,conditional,SOC2-Type2;HIPAA-BAA;GDPR,Configurable,Meeting recorder bot; popular with sales teams
+Fathom,fathom.video,MEETING,4,MEDIUM,no,yes,US,conditional,SOC2-Type2;GDPR,Configurable,Free tier popular; meeting summaries
+Granola,granola.ai,MEETING,4,MEDIUM,no,yes,US,conditional,SOC2,Configurable,Note-taker that does not join meetings as a bot
+tl;dv,tldv.io,MEETING,5,MEDIUM,configurable,yes,DE,conditional,SOC2;GDPR,Configurable,German company; GDPR-aligned
+Read AI,read.ai,MEETING,5,MEDIUM,no,yes,US,conditional,SOC2,Configurable,Meeting analytics
+Gong,gong.io,MEETING,3,LOW,no,yes,multi,yes,SOC2-Type2;ISO27001;GDPR,Bound to contract,Enterprise revenue intelligence; strong compliance
+Chorus by ZoomInfo,chorus.ai,MEETING,3,LOW,no,yes,US,conditional,SOC2;GDPR,Bound to contract,Enterprise conversation intelligence
+Zoom AI Companion,zoom.us,EMBEDDED,3,LOW,no,yes,multi,conditional,SOC2;ISO27001;HIPAA,Bound to Zoom retention,Built into Zoom; does not train on customer audio
+Notion AI,notion.so,NOTE,3,LOW,no,yes,multi,conditional,SOC2-Type2;ISO27001;GDPR,Bound to workspace,AI features bound by Notion DPA; does not train on customer data
+Mem,mem.ai,NOTE,5,MEDIUM,configurable,yes,US,conditional,SOC2,Bound to subscription,AI note-taking
+Reflect,reflect.app,NOTE,5,MEDIUM,configurable,yes,US,conditional,none-public,End-to-end encrypted notes,Privacy-focused notes app
+Apollo.io,apollo.io,SALES,4,MEDIUM,no,yes,multi,conditional,SOC2-Type2;GDPR,Bound to subscription,Sales intelligence with AI features
+Clay,clay.com,SALES,4,MEDIUM,no,yes,US,conditional,SOC2-Type2,Bound to subscription,Sales prospecting platform
+Lavender,lavender.ai,SALES,4,MEDIUM,no,yes,US,conditional,SOC2;GDPR,Configurable,Email coaching with AI
+Salesforce Einstein,salesforce.com,EMBEDDED,2,LOW,no,yes,multi,yes,SOC2;ISO27001;HIPAA;FedRAMP,Bound to Salesforce DPA,Enterprise-grade; tenant-bound
+HubSpot AI / Breeze,hubspot.com,EMBEDDED,3,LOW,no,yes,multi,yes,SOC2-Type2;ISO27001;GDPR,Bound to HubSpot DPA,AI features bound to HubSpot tenant
+Slack AI,slack.com,EMBEDDED,3,LOW,no,yes,multi,yes,SOC2;ISO27001;HIPAA;FedRAMP,Bound to workspace,Does not train on customer data
+DeepL,deepl.com,TRANSLATE,3,LOW,no,yes,EU,yes,SOC2-Type2;ISO27001;GDPR,Pro: not stored,German company; Pro plan does not store text; GDPR-native
+Google Translate,translate.google.com,TRANSLATE,5,MEDIUM,no,yes,multi,no,SOC2;ISO27001,Per consumer policy,Free consumer service may log queries
+Devin,devin.ai,AGENT,7,HIGH,yes,yes,US,no,none-public,Sessions retained,Autonomous coding agent; runs code in cloud sandbox; data flows broadly
+AutoGPT,autogpt.net,AGENT,6,MEDIUM,configurable,no,self-hosted,conditional,n/a,Self-controlled,Open-source agent framework; depends on configuration
+Replika,replika.com,RISKY,9,CRITICAL,yes,no,US,no,none-public,Indefinite,Companion AI; intimate personal content; documented safety incidents
+Janitor AI,janitorai.com,RISKY,10,CRITICAL,yes,no,US,no,none-public,Indefinite,Adult roleplay personas; explicit content; high data risk
+WormGPT / FraudGPT (dark web),various,RISKY,10,CRITICAL,yes,no,unknown,no,none,Per criminal market,Dark-web LLMs marketed for fraud and malware; presence on a corporate device indicates active threat
+Free GPT clones (various),various,RISKY,9,CRITICAL,yes,no,unknown,no,none,Unknown,Non-official "free ChatGPT" sites often phishing or credential-harvesting; treat any non-OpenAI domain claiming to be ChatGPT with suspicion
