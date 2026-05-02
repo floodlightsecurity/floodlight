@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floodlight</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-muted: #f6f5f0;
+      --text: #1a1a1a;
+      --text-muted: #6b6b66;
+      --border: rgba(0, 0, 0, 0.1);
+      --amber: #BA7517;
+      --green: #3B6D11;
+      --red: #A32D2D;
+      --orange: #993C1D;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a19;
+        --bg-muted: #2a2a28;
+        --text: #f0eee8;
+        --text-muted: #999;
+        --border: rgba(255, 255, 255, 0.1);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      width: 360px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 14px 16px;
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo {
+      width: 24px; height: 24px;
+      background: var(--amber);
+      color: white;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .title { font-weight: 500; font-size: 14px; }
+    .subtitle { color: var(--text-muted); font-size: 11px; margin-top: 1px; }
+    main { padding: 14px 16px; }
+    .panel {
+      background: var(--bg-muted);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .value { font-size: 14px; font-weight: 500; }
+    .risk-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .risk-LOW      { background: #EAF3DE; color: #3B6D11; }
+    .risk-MEDIUM   { background: #FAEEDA; color: #854F0B; }
+    .risk-HIGH     { background: #FAECE7; color: #993C1D; }
+    .risk-CRITICAL { background: #FCEBEB; color: #A32D2D; }
+    @media (prefers-color-scheme: dark) {
+      .risk-LOW      { background: #173404; color: #C0DD97; }
+      .risk-MEDIUM   { background: #412402; color: #FAC775; }
+      .risk-HIGH     { background: #4A1B0C; color: #F5C4B3; }
+      .risk-CRITICAL { background: #501313; color: #F7C1C1; }
+    }
+    .events-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .event {
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--border);
+      font-size: 12px;
+    }
+    .event:last-child { border-bottom: none; }
+    .event-meta {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .empty {
+      padding: 16px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    footer {
+      padding: 10px 16px;
+      border-top: 0.5px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    button, .button-link {
+      background: transparent;
+      border: 0.5px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button:hover, .button-link:hover { background: var(--bg-muted); }
+    .privacy-note {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      padding: 8px 16px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">F</div>
+    <div>
+      <div class="title">Floodlight</div>
+      <div class="subtitle">Shadow AI discovery — metadata only</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="panel" id="current-tool-panel">
+      <div class="label">This page</div>
+      <div class="value" id="current-tool">Checking…</div>
+    </div>
+
+    <div class="label">Recent events</div>
+    <ul class="events-list" id="events"></ul>
+  </main>
+
+  <div class="privacy-note">
+    Prompt content never leaves your machine.<br>
+    <a href="https://github.com/floodlightsecurity/floodlight" target="_blank" rel="noopener">Read the source</a>
+  </div>
+
+  <footer>
+    <button id="btn-options">Settings</button>
+    <button id="btn-clear">Clear log</button>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
