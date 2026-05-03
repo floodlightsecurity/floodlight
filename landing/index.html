@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floodlight — See every AI tool your team uses, before regulators ask.</title>
+  <meta name="description" content="Open-source shadow AI discovery for mid-market companies. Free 7-day audit. Maps to EU AI Act Article 4, UK GDPR, FCA SYSC. The extension is open-source — read the code that runs on your team's machines." />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Floodlight — Shadow AI discovery for mid-market companies" />
+  <meta property="og:description" content="See every AI tool your team uses, before regulators ask. Free 7-day audit. Open-source." />
+  <meta property="og:url" content="https://floodlightsecurity.co" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────────────────────────
+       Floodlight — landing page
+       Single file, no framework. Trust-focused with conversion energy.
+       ────────────────────────────────────────────────────────────── */
+    :root {
+      --bg:           #FAF8F1;
+      --bg-soft:      #F1EEE3;
+      --bg-deep:      #1F1D17;
+      --ink:          #1A1A1A;
+      --ink-muted:    #4A4A48;
+      --ink-faint:    #7A7770;
+      --rule:         #E1DDD0;
+      --amber:        #BA7517;
+      --amber-soft:   #F5E5C9;
+      --amber-deep:   #8B5712;
+      --green:        #3B6D11;
+      --crit:         #A32D2D;
+
+      --font-display: "Newsreader", ui-serif, Georgia, serif;
+      --font-body:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+      --max-w:        1180px;
+      --gutter:       24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Subtle paper-grain texture for depth — extremely faint, just enough
+       to break up flat colour without being noticeable */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(186, 117, 23, 0.025) 0%, transparent 40%),
+        radial-gradient(circle at 75% 65%, rgba(186, 117, 23, 0.02) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ───────── Typography ───────── */
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.015em; line-height: 1.1; }
+    h1 { font-size: clamp(2.8rem, 6vw, 5.2rem); letter-spacing: -0.025em; line-height: 1.02; }
+    h2 { font-size: clamp(2.2rem, 4vw, 3.4rem); letter-spacing: -0.02em; line-height: 1.08; }
+    h3 { font-size: 1.5rem; letter-spacing: -0.01em; line-height: 1.25; }
+    h4 { font-size: 0.9rem; font-family: var(--font-body); font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); }
+
+    em.serif-italic { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+
+    a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--rule); transition: text-decoration-color 0.2s; }
+    a:hover { text-decoration-color: var(--amber); }
+    a.plain { text-decoration: none; }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-soft);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ───────── Nav ───────── */
+    nav {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(12px);
+      background: rgba(250, 248, 241, 0.85);
+      border-bottom: 0.5px solid var(--rule);
+      z-index: 50;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px var(--gutter);
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.005em;
+    }
+    .brand-glyph {
+      width: 26px; height: 26px;
+      background: var(--amber);
+      color: white;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 5px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+    }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink);
+      color: var(--bg) !important;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .nav-cta:hover { background: var(--amber-deep); }
+
+    @media (max-width: 720px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+
+    /* ───────── Hero ───────── */
+    .hero {
+      padding: 120px 0 100px;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--amber);
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow::before {
+      content: "";
+      width: 24px; height: 1px;
+      background: var(--amber);
+    }
+    .hero h1 {
+      max-width: 18ch;
+      margin-bottom: 30px;
+    }
+    .hero h1 .accent {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber-deep);
+    }
+    .hero-lede {
+      max-width: 540px;
+      font-size: 1.18rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      margin-bottom: 44px;
+    }
+    .hero-cta-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-primary {
+      background: var(--ink);
+      color: var(--bg);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 18px rgba(0,0,0,0.12);
+    }
+    .btn-primary::after {
+      content: "→";
+      transition: transform 0.15s;
+    }
+    .btn-primary:hover::after {
+      transform: translateX(3px);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 0.5px solid var(--ink);
+    }
+    .btn-secondary:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .hero-disclaimer {
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      max-width: 540px;
+    }
+
+    /* Hero side panel — small mock of an audit summary */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 56px; }
+    }
+    .hero-mock {
+      background: white;
+      border: 0.5px solid var(--rule);
+      border-radius: 12px;
+      padding: 28px 30px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      font-size: 0.9rem;
+      position: relative;
+    }
+    .hero-mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 0.5px solid var(--rule);
+    }
+    .hero-mock-title {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .hero-mock-id { color: var(--ink-faint); font-family: var(--font-mono); font-size: 0.75rem; }
+    .hero-mock-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .hero-mock-stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .hero-mock-stat-num.amber { color: var(--amber-deep); }
+    .hero-mock-stat-num.crit  { color: var(--crit); }
+    .hero-mock-stat-label {
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+    .hero-mock-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--rule);
+      font-size: 0.85rem;
+    }
+    .hero-mock-row:last-child { border-bottom: none; }
+    .risk-pill {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .risk-LOW       { background: #EAF3DE; color: #3B6D11; }
+    .risk-MEDIUM    { background: #FAEEDA; color: #854F0B; }
+    .risk-HIGH      { background: #FAECE7; color: #993C1D; }
+    .risk-CRITICAL  { background: #FCEBEB; color: #A32D2D; }
+    .hero-mock-tag {
+      position: absolute;
+      top: -10px;
+      left: 24px;
+      background: var(--amber);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ───────── Sections ───────── */
+    section {
+      padding: 96px 0;
+      position: relative;
+    }
+    .section-eyebrow {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--amber);
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-eyebrow::before {
+      content: "";
+      width: 24px; height: 1px;
+      background: var(--amber);
+    }
+    .section-heading {
+      max-width: 18ch;
+      margin-bottom: 24px;
+    }
+    .section-lede {
+      font-size: 1.15rem;
+      color: var(--ink-muted);
+      max-width: 60ch;
+      line-height: 1.6;
+    }
+
+    /* ───────── The problem ───────── */
+    .problem {
+      background: var(--bg-soft);
+      border-top: 0.5px solid var(--rule);
+      border-bottom: 0.5px solid var(--rule);
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      margin-top: 64px;
+    }
+    @media (max-width: 880px) {
+      .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+    .problem-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-style: italic;
+      color: var(--amber-deep);
+      line-height: 1;
+      margin-bottom: 16px;
+      font-weight: 400;
+    }
+    .problem-card h3 {
+      margin-bottom: 12px;
+    }
+    .problem-card p {
+      color: var(--ink-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* ───────── How it works ───────── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 64px;
+      counter-reset: step-counter;
+    }
+    @media (max-width: 880px) { .how-grid { grid-template-columns: 1fr; } }
+    .how-step {
+      background: white;
+      border: 0.5px solid var(--rule);
+      border-radius: 12px;
+      padding: 32px 28px;
+      position: relative;
+      counter-increment: step-counter;
+    }
+    .how-step::before {
+      content: "0" counter(step-counter);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--amber);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .how-step h3 {
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+    }
+    .how-step p {
+      color: var(--ink-muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    /* ───────── Sample artifact ───────── */
+    .sample {
+      background: var(--bg-deep);
+      color: var(--bg);
+      border-radius: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .sample::before {
+      content: "";
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(186, 117, 23, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sample .container { position: relative; z-index: 1; }
+    .sample .section-eyebrow { color: #E5A958; }
+    .sample .section-eyebrow::before { background: #E5A958; }
+    .sample h2 { color: var(--bg); }
+    .sample-lede {
+      font-size: 1.15rem;
+      color: rgba(250, 248, 241, 0.75);
+      max-width: 60ch;
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .sample-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    @media (max-width: 880px) {
+      .sample-grid { grid-template-columns: 1fr; }
+    }
+    .sample-bullets {
+      list-style: none;
+    }
+    .sample-bullets li {
+      padding: 18px 0;
+      border-bottom: 0.5px solid rgba(255,255,255,0.1);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: baseline;
+    }
+    .sample-bullets li:last-child { border-bottom: none; }
+    .sample-bullets .num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #E5A958;
+      letter-spacing: 0.08em;
+    }
+    .sample-bullets strong {
+      font-weight: 500;
+      font-size: 1.05rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .sample-bullets span.note {
+      color: rgba(250, 248, 241, 0.6);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+    .sample-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      color: #E5A958;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 0.5px solid #E5A958;
+      padding-bottom: 2px;
+    }
+    .sample-cta:hover { color: white; border-bottom-color: white; }
+
+    /* PDF mock visual */
+    .pdf-stack {
+      position: relative;
+      perspective: 1000px;
+    }
+    .pdf-page {
+      background: white;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 40px 36px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+      transform: rotate(-1.5deg);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .pdf-page::before {
+      content: "";
+      position: absolute;
+      bottom: -16px; right: -16px;
+      width: 100%; height: 100%;
+      background: rgba(186, 117, 23, 0.15);
+      border-radius: 8px;
+      z-index: -1;
+      transform: rotate(2deg);
+    }
+    .pdf-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .pdf-page h4 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      text-transform: none;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .pdf-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .pdf-stat {
+      background: var(--bg-soft);
+      padding: 10px 12px;
+      border-radius: 5px;
+    }
+    .pdf-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 500;
+    }
+    .pdf-stat-num.amber { color: var(--amber-deep); }
+    .pdf-stat-num.crit  { color: var(--crit); }
+    .pdf-stat-label {
+      font-size: 0.6rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+    .pdf-bar {
+      display: flex;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .pdf-bar div { height: 100%; }
+    .pdf-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 0.7rem;
+      border-bottom: 0.5px solid var(--rule);
+    }
+    .pdf-row:last-child { border-bottom: none; }
+
+    /* ───────── Trust ───────── */
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+      margin-top: 56px;
+    }
+    @media (max-width: 880px) { .trust-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .trust-card {
+      padding: 32px 0;
+      border-top: 1px solid var(--ink);
+    }
+    .trust-card h3 {
+      margin-bottom: 12px;
+      font-size: 1.5rem;
+    }
+    .trust-card p {
+      color: var(--ink-muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .trust-card a {
+      font-weight: 500;
+      color: var(--amber-deep);
+      text-decoration-color: var(--amber-soft);
+    }
+
+    /* ───────── Sign-up form ───────── */
+    .signup {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+      border-top: 0.5px solid var(--rule);
+    }
+    .signup-card {
+      max-width: 640px;
+      margin: 56px auto 0;
+      background: white;
+      border-radius: 14px;
+      padding: 48px 44px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      border: 0.5px solid var(--rule);
+    }
+    @media (max-width: 600px) {
+      .signup-card { padding: 36px 28px; }
+    }
+    form .form-row { margin-bottom: 18px; }
+    form .form-row.split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 480px) { form .form-row.split { grid-template-columns: 1fr; } }
+    form label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 0.5px solid var(--rule);
+      border-radius: 7px;
+      background: var(--bg);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    form input:focus, form select:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px var(--amber-soft);
+    }
+    form button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 8px;
+    }
+    form button[type="submit"]:hover:not(:disabled) {
+      background: var(--amber-deep);
+    }
+    form button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .form-help {
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+      margin-top: 14px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .form-message {
+      padding: 14px 16px;
+      border-radius: 7px;
+      font-size: 0.92rem;
+      margin-top: 16px;
+      display: none;
+    }
+    .form-message.success { display: block; background: #EAF3DE; color: var(--green); }
+    .form-message.error   { display: block; background: #FAECE7; color: var(--crit); }
+
+    /* ───────── Footer ───────── */
+    footer {
+      padding: 64px 0 48px;
+      border-top: 0.5px solid var(--rule);
+      font-size: 0.9rem;
+      color: var(--ink-faint);
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .footer-tag {
+      max-width: 320px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .footer-links a { color: var(--ink-muted); text-decoration: none; font-weight: 500; }
+    .footer-links a:hover { color: var(--ink); }
+    .footer-fineprint {
+      padding-top: 24px;
+      border-top: 0.5px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.82rem;
+    }
+    @media (max-width: 600px) {
+      .footer-fineprint { flex-direction: column; gap: 8px; }
+    }
+
+    /* ───────── Subtle reveal animations ───────── */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        opacity: 0;
+        transform: translateY(8px);
+        animation: reveal 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      .reveal-1 { animation-delay: 0.05s; }
+      .reveal-2 { animation-delay: 0.18s; }
+      .reveal-3 { animation-delay: 0.32s; }
+      .reveal-4 { animation-delay: 0.46s; }
+      @keyframes reveal {
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─────────── NAV ─────────── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="brand plain">
+        <span class="brand-glyph">F</span>
+        <span>Floodlight</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#sample">Sample report</a>
+        <a href="#trust">Open source</a>
+        <a href="#audit" class="nav-cta">Free audit</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─────────── HERO ─────────── -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow reveal reveal-1">Shadow AI Discovery · Open source</div>
+          <h1 class="reveal reveal-2">
+            See every AI tool your team uses, <span class="accent">before regulators ask.</span>
+          </h1>
+          <p class="hero-lede reveal reveal-3">
+            Most companies have no idea which AI tools their employees actually use — or what data is being pasted into them. Floodlight gives you the inventory, the risk classification, and the regulatory mapping in seven days. Free.
+          </p>
+          <div class="hero-cta-row reveal reveal-4">
+            <a href="#audit" class="btn btn-primary">Get your free 7-day audit</a>
+            <a href="#sample" class="btn btn-secondary">See a sample report</a>
+          </div>
+          <p class="hero-disclaimer reveal reveal-4">
+            No credit card. No backend account. The browser extension is open-source — you can read every byte of code that runs on your team's machines.
+          </p>
+        </div>
+
+        <div class="hero-mock reveal reveal-3">
+          <span class="hero-mock-tag">Real audit excerpt</span>
+          <div class="hero-mock-header">
+            <div class="hero-mock-title">Shadow AI Audit · Acme Capital Ltd</div>
+            <div class="hero-mock-id">FL-2026-05</div>
+          </div>
+          <div class="hero-mock-stats">
+            <div>
+              <div class="hero-mock-stat-num amber">19</div>
+              <div class="hero-mock-stat-label">distinct AI tools observed</div>
+            </div>
+            <div>
+              <div class="hero-mock-stat-num crit">7</div>
+              <div class="hero-mock-stat-label">credential pastes flagged</div>
+            </div>
+          </div>
+          <div class="hero-mock-row">
+            <span>ChatGPT</span><span class="risk-pill risk-HIGH">HIGH</span>
+          </div>
+          <div class="hero-mock-row">
+            <span>DeepSeek</span><span class="risk-pill risk-CRITICAL">CRITICAL</span>
+          </div>
+          <div class="hero-mock-row">
+            <span>GitHub Copilot</span><span class="risk-pill risk-MEDIUM">MEDIUM</span>
+          </div>
+          <div class="hero-mock-row">
+            <span>Claude</span><span class="risk-pill risk-LOW">LOW</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─────────── PROBLEM ─────────── -->
+  <section class="problem">
+    <div class="container">
+      <div class="section-eyebrow">The problem</div>
+      <h2 class="section-heading">You can't govern what you can't see.</h2>
+      <p class="section-lede">
+        DLP and CASB tools were not built for the modern AI taxonomy. They flag <em class="serif-italic">"ChatGPT"</em> as one thing — when in reality there are five distinct ChatGPT tiers with five different data policies. The difference between them is the difference between a SOC 2-covered Enterprise contract and pasting customer PII into an account that trains on it.
+      </p>
+
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-num">i</div>
+          <h3>23 tools, on average</h3>
+          <p>A typical 100-person company uses around 23 distinct AI products across browser, desktop and embedded surfaces. IT knows about three or four. Security teams discover the rest after an incident.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-num">ii</div>
+          <h3>EU AI Act, in force.</h3>
+          <p>Article 4 (AI literacy) is in force since 2 February 2025. As a deployer of any third-party AI system, you must take measures to ensure sufficient AI literacy among staff — and demonstrate them.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-num">iii</div>
+          <h3>Credentials in prompts.</h3>
+          <p>API keys, customer data, source code — pasted into chat interfaces every day. Most companies don't find out until a leaked key triggers an alert in someone else's logs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── HOW IT WORKS ─────────── -->
+  <section id="how">
+    <div class="container">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-heading">Seven days. One PDF. Zero hosted infrastructure.</h2>
+      <p class="section-lede">
+        The audit runs entirely on your team's own machines. Pasted content is classified locally — only category labels and counts ever leave the endpoint. The actual prompts never do.
+      </p>
+
+      <div class="how-grid">
+        <div class="how-step">
+          <h3>Install the open-source extension</h3>
+          <p>Sideload it on Chrome or Edge. The extension monitors visits to ~60 AI tool domains and classifies pasted content locally for emails, API keys, source code, regulated identifiers, and 12 other categories.</p>
+        </div>
+        <div class="how-step">
+          <h3>Use your browser as normal — for seven days</h3>
+          <p>The extension runs silently. No popups, no prompts, no productivity drag. Metadata is logged on the device only — prompt content is never transmitted, and you can audit the source code yourself.</p>
+        </div>
+        <div class="how-step">
+          <h3>Receive a branded audit report</h3>
+          <p>At the end of the period, export the local event log and we generate a 10–12 page PDF: tool inventory, risk classification, sensitive content events, regulatory mapping (EU AI Act, UK GDPR, FCA, ISO 42001), and recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── SAMPLE REPORT ─────────── -->
+  <section id="sample" class="sample">
+    <div class="container">
+      <div class="section-eyebrow">What you receive</div>
+      <h2>A document the CISO can read in fifteen minutes — and act on the same day.</h2>
+      <p class="sample-lede">
+        Real example below. 11 pages, A4, mapped to specific regulatory obligations. Cites the actual usage data from the audit period — not a generic template.
+      </p>
+
+      <div class="sample-grid">
+        <ul class="sample-bullets">
+          <li>
+            <span class="num">§1</span>
+            <div>
+              <strong>Executive summary</strong>
+              <span class="note">Headline narrative, hero stats, risk distribution, top three actions for this week.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">§2</span>
+            <div>
+              <strong>Tool inventory</strong>
+              <span class="note">Every AI tool observed, ranked by risk band. Event count and distinct user count per tool.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">§3</span>
+            <div>
+              <strong>Sensitive content events</strong>
+              <span class="note">Categories the local classifier flagged. Chronological list of high-concern pastes.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">§4</span>
+            <div>
+              <strong>Regulatory mapping</strong>
+              <span class="note">EU AI Act Articles 4 / 5 / 9–10–13. UK GDPR Articles 5(1)(f) / 32 / 44. FCA SYSC 6.1.1R / 13. ISO/IEC 42001.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">§5</span>
+            <div>
+              <strong>Recommendations</strong>
+              <span class="note">Eight actions ranked by impact-per-effort: this week, this month, quarterly. With time estimates.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">§6</span>
+            <div>
+              <strong>Methodology &amp; disclosure</strong>
+              <span class="note">Privacy contract, limitations, "what this report is not". The trust artifact.</span>
+            </div>
+          </li>
+        </ul>
+
+        <div class="pdf-stack">
+          <div class="pdf-page">
+            <div class="pdf-eyebrow">§1 · EXECUTIVE SUMMARY</div>
+            <h4>The headline finding</h4>
+            <div class="pdf-stats">
+              <div class="pdf-stat">
+                <div class="pdf-stat-num amber">19</div>
+                <div class="pdf-stat-label">distinct tools</div>
+              </div>
+              <div class="pdf-stat">
+                <div class="pdf-stat-num">28</div>
+                <div class="pdf-stat-label">active users</div>
+              </div>
+              <div class="pdf-stat">
+                <div class="pdf-stat-num crit">641</div>
+                <div class="pdf-stat-label">high-risk events</div>
+              </div>
+              <div class="pdf-stat">
+                <div class="pdf-stat-num crit">7</div>
+                <div class="pdf-stat-label">credential pastes</div>
+              </div>
+            </div>
+            <div class="pdf-bar">
+              <div style="background: #3B6D11; flex: 4;"></div>
+              <div style="background: #854F0B; flex: 9;"></div>
+              <div style="background: #993C1D; flex: 3;"></div>
+              <div style="background: #A32D2D; flex: 3;"></div>
+            </div>
+            <div class="pdf-row"><span>ChatGPT (Free/Plus)</span><span>HIGH</span></div>
+            <div class="pdf-row"><span>DeepSeek</span><span>CRITICAL</span></div>
+            <div class="pdf-row"><span>Cursor</span><span>MEDIUM</span></div>
+          </div>
+        </div>
+      </div>
+
+      <a href="#audit" class="sample-cta">Get your own report — 7 days, no payment →</a>
+    </div>
+  </section>
+
+  <!-- ─────────── TRUST ─────────── -->
+  <section id="trust">
+    <div class="container">
+      <div class="section-eyebrow">Open source &amp; auditable</div>
+      <h2 class="section-heading">The thing security people actually trust.</h2>
+      <p class="section-lede">
+        We are asking your employees to install software on their work machines. That is a meaningful ask. The least we can do is publish every byte of it — the extension, the classifier, the risk scoring, the report template — so anyone can verify the privacy claims hold.
+      </p>
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <h3>The privacy contract</h3>
+          <p>
+            Pasted content is classified locally, in the browser, and immediately discarded. Only category labels and counts leave the endpoint. The actual prompt text is never logged, never transmitted, never stored.
+          </p>
+          <a href="https://github.com/floodlightsecurity/floodlight/blob/main/extension/docs/PRIVACY.md" target="_blank" rel="noopener">Read the byte-by-byte disclosure →</a>
+        </div>
+        <div class="trust-card">
+          <h3>The risk methodology</h3>
+          <p>
+            Every tool in the taxonomy gets a numeric risk score and a band based on four published factors: trains-on-input default, hosting jurisdiction, compliance certifications, retention defaults. Scoring rules are public and corrections are welcome via PR.
+          </p>
+          <a href="https://github.com/floodlightsecurity/floodlight/blob/main/data/RISK_METHODOLOGY.md" target="_blank" rel="noopener">Read the scoring methodology →</a>
+        </div>
+        <div class="trust-card">
+          <h3>The full source code</h3>
+          <p>
+            Browser extension, classifier, audit report generator, taxonomy data — all of it lives in one public repository under MIT licence. Fork it, audit it, run it offline, send a pull request.
+          </p>
+          <a href="https://github.com/floodlightsecurity/floodlight" target="_blank" rel="noopener">github.com/floodlightsecurity/floodlight →</a>
+        </div>
+        <div class="trust-card">
+          <h3>What we don't do</h3>
+          <p>
+            We don't ship a closed-source agent. We don't require a hosted account to run an audit. We don't sell employee browsing data, ever, full stop. We don't pretend the extension catches mobile or BYOD usage — it doesn't, and the methodology section says so.
+          </p>
+          <a href="https://github.com/floodlightsecurity/floodlight#status" target="_blank" rel="noopener">See the published limitations →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── SIGN-UP ─────────── -->
+  <section id="audit" class="signup">
+    <div class="container">
+      <div style="text-align: center;">
+        <div class="section-eyebrow" style="display: inline-flex;">Free audit · No payment</div>
+        <h2 class="section-heading" style="margin-left: auto; margin-right: auto;">Find out what your team is doing in the dark.</h2>
+        <p class="section-lede" style="margin-left: auto; margin-right: auto;">
+          Sign up, install the extension on a few volunteer browsers, and in seven days you'll have the full PDF in your inbox. We'll be in touch within one working day.
+        </p>
+      </div>
+
+      <div class="signup-card">
+        <form id="audit-form" novalidate>
+          <div class="form-row split">
+            <div>
+              <label for="name">Your name</label>
+              <input type="text" id="name" name="name" required autocomplete="name" />
+            </div>
+            <div>
+              <label for="email">Work email</label>
+              <input type="email" id="email" name="email" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-row split">
+            <div>
+              <label for="company">Company name</label>
+              <input type="text" id="company" name="company" required autocomplete="organization" />
+            </div>
+            <div>
+              <label for="headcount">Approx. headcount</label>
+              <select id="headcount" name="headcount" required>
+                <option value="">Select…</option>
+                <option value="1-49">1–49</option>
+                <option value="50-199">50–199</option>
+                <option value="200-499">200–499</option>
+                <option value="500-999">500–999</option>
+                <option value="1000+">1,000+</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" id="submit-btn">Request your free audit</button>
+
+          <p class="form-help">
+            We'll never spam you, share your details, or add you to a marketing list without consent. By submitting you confirm you have authority to request a security audit on behalf of your organisation.
+          </p>
+
+          <div class="form-message" id="form-message"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── FOOTER ─────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="brand">
+          <span class="brand-glyph">F</span>
+          <span>Floodlight Security</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/floodlightsecurity/floodlight" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/floodlightsecurity/floodlight/blob/main/extension/docs/PRIVACY.md" target="_blank" rel="noopener">Privacy</a>
+          <a href="https://github.com/floodlightsecurity/floodlight/blob/main/data/RISK_METHODOLOGY.md" target="_blank" rel="noopener">Methodology</a>
+          <a href="#audit">Free audit</a>
+        </div>
+      </div>
+      <div class="footer-fineprint">
+        <p class="footer-tag">
+          Floodlight is in pre-alpha. The extension and the audit pipeline are functional and in active use; the hosted dashboard and policy enforcement are on the roadmap.
+        </p>
+        <span>© 2026 Floodlight Security · Built in the open.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Form submission — POSTs to /api/lead which forwards to Resend
+    const form = document.getElementById('audit-form');
+    const messageEl = document.getElementById('form-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      messageEl.className = 'form-message';
+      messageEl.textContent = '';
+
+      const data = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        company: form.company.value.trim(),
+        headcount: form.headcount.value,
+      };
+
+      // Basic client-side validation
+      if (!data.name || !data.email || !data.company || !data.headcount) {
+        messageEl.className = 'form-message error';
+        messageEl.textContent = 'Please fill in every field.';
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        messageEl.className = 'form-message error';
+        messageEl.textContent = 'That email doesn\u2019t look right. Please check and try again.';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          throw new Error(`Server returned ${res.status}`);
+        }
+        messageEl.className = 'form-message success';
+        messageEl.textContent = 'Thanks. We\u2019ll be in touch within one working day with the extension link and onboarding details.';
+        form.reset();
+      } catch (err) {
+        messageEl.className = 'form-message error';
+        messageEl.textContent = 'Something went wrong on our end. Please email hello@floodlightsecurity.co directly and we\u2019ll sort it.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request your free audit';
+      }
+    });
+  </script>
+</body>
+</html>
