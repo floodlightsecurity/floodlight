@@ -1,6 +1,6 @@
 # Floodlight — Landing Page
 
-The marketing front door for Floodlight. Single static HTML page plus one serverless function for the sign-up form.
+The marketing front door for Floodlight. Single static HTML page plus one Cloudflare Pages Function for the sign-up form.
 
 Lives at: **https://floodlightsecurity.co**
 
@@ -9,16 +9,17 @@ Lives at: **https://floodlightsecurity.co**
 ```
 landing/
 ├── public/
-│   └── index.html       # the entire landing page (CSS, JS, copy, all inline)
-├── api/
-│   └── lead.js          # Vercel serverless function — /api/lead
-├── vercel.json          # deployment config (security headers, output dir)
+│   ├── index.html       # the entire landing page (CSS, JS, copy, all inline)
+│   └── _headers         # security headers (Cloudflare Pages convention)
+├── functions/
+│   └── api/
+│       └── lead.js      # Pages Function — auto-routed to /api/lead
 └── README.md            # this file
 ```
 
 ## Local preview
 
-You can view the page locally without any build step:
+You can view the static page locally without any build step:
 
 ```bash
 cd landing/public
@@ -28,13 +29,23 @@ python3 -m http.server 8080
 
 The form will fail when submitted locally (no `/api/lead` available), but every other interaction works.
 
-To test the form end-to-end locally, install Vercel CLI and run:
+To test the form end-to-end locally, install Wrangler (Cloudflare CLI) and run:
 
 ```bash
-npm install -g vercel
+npm install -g wrangler
 cd landing
-vercel dev
-# Open http://localhost:3000
+wrangler pages dev public --compatibility-date=2024-01-01
+# Open http://localhost:8788
+```
+
+When running with `wrangler pages dev`, Functions in the `functions/` folder are loaded automatically and routed by file path. `functions/api/lead.js` becomes `POST /api/lead`.
+
+For the form to actually send email locally, set the env vars in a `.dev.vars` file (gitignored):
+
+```
+RESEND_API_KEY=re_...
+LEAD_TO_EMAIL=david@floodlightsecurity.co
+LEAD_FROM_EMAIL=leads@floodlightsecurity.co
 ```
 
 ## Deployment — first time
@@ -43,23 +54,31 @@ vercel dev
 
 1. Sign up at [resend.com](https://resend.com) — free tier covers 100 emails/day, 3,000/month
 2. Add and verify the `floodlightsecurity.co` domain in Resend
-3. Verifying requires adding 3 DNS records (SPF, DKIM, return-path) at your domain registrar
-4. Once verified, create an API key from `https://resend.com/api-keys` — copy it, you'll need it in step 3
+3. Verifying requires adding 3 DNS records (SPF, DKIM, return-path) at your domain registrar (Cloudflare)
+4. Once verified, create an API key from `https://resend.com/api-keys` — copy it, you'll need it later
 
-### 2. Deploy to Vercel
+### 2. Deploy to Cloudflare Pages
 
 1. Push this repo to GitHub (already done if you're following along)
-2. Go to [vercel.com](https://vercel.com), sign in with GitHub
-3. Click "Add New Project" → import the `floodlight` repo
-4. **Important:** in the import wizard, set the **Root Directory** to `landing` so Vercel builds from this folder, not the repo root
-5. Framework preset: **Other**
-6. Build command: leave blank
-7. Output directory: `public`
-8. Click Deploy. The first deploy will fail because env vars are missing — fix that next.
+2. Sign in to [dash.cloudflare.com](https://dash.cloudflare.com) — same account that holds the domain
+3. In the left nav: **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+4. Authorise GitHub access, select the `floodlight` repository
+5. Configure the build:
+
+   | Setting              | Value                |
+   |----------------------|----------------------|
+   | Project name         | `floodlight-landing` (or anything — this becomes the staging URL) |
+   | Production branch    | `main`               |
+   | Framework preset     | **None**             |
+   | Build command        | *(leave blank)*      |
+   | Build output directory | `landing/public`   |
+   | Root directory       | `/` (leave default)  |
+
+6. Click **Save and Deploy**. The first build will succeed but the form will fail because env vars aren't set yet — fix that next.
 
 ### 3. Set environment variables
 
-In the Vercel dashboard for the project: **Settings → Environment Variables** — add three:
+In the Pages project: **Settings → Environment variables → Production** — add three variables. Click **Encrypt** on each (especially the API key).
 
 | Name              | Value                                                  |
 |-------------------|--------------------------------------------------------|
@@ -67,16 +86,17 @@ In the Vercel dashboard for the project: **Settings → Environment Variables** 
 | `LEAD_TO_EMAIL`   | Your inbox, e.g. `david@floodlightsecurity.co`         |
 | `LEAD_FROM_EMAIL` | A verified sender on Resend, e.g. `leads@floodlightsecurity.co` |
 
-Apply to **Production, Preview, Development** for all three.
+Add the same three to **Preview** as well so PR previews work.
 
-Then redeploy: in Vercel, **Deployments → ⋯ → Redeploy** on the most recent build.
+Then redeploy: **Deployments → ⋯ on the latest build → Retry deployment**.
 
 ### 4. Connect your domain
 
-1. In Vercel: **Settings → Domains** → add `floodlightsecurity.co` and `www.floodlightsecurity.co`
-2. Vercel will tell you which DNS records to set at your domain registrar (Cloudflare, Namecheap, etc.)
-3. Add them, wait 5–60 minutes for propagation
-4. Vercel auto-issues an SSL cert; the site goes live as soon as DNS resolves
+1. Still in the Pages project: **Custom domains** → **Set up a custom domain**
+2. Enter `floodlightsecurity.co` → Continue
+3. Cloudflare will detect that the domain is on the same Cloudflare account and configure DNS automatically
+4. Repeat for `www.floodlightsecurity.co` if you want both
+5. SSL provisions instantly (Cloudflare-managed). Site goes live within a couple of minutes.
 
 ### 5. Test the form
 
@@ -85,7 +105,13 @@ Then redeploy: in Vercel, **Deployments → ⋯ → Redeploy** on the most recen
 3. Submit
 4. Check the inbox you set as `LEAD_TO_EMAIL` — the lead email should arrive within 30 seconds
 
-If something fails: in Vercel, go to **Deployments → [latest] → Functions** to see the runtime logs.
+If something fails: in the Pages project, **Deployments → [latest] → View Function logs** shows runtime output from the Worker.
+
+## Why Cloudflare Pages (not Vercel)?
+
+Cloudflare Pages' free tier explicitly permits commercial use. Vercel's Hobby tier does not — it's restricted to non-commercial projects, and Floodlight is a commercial product. Pages also keeps domain, DNS, hosting, SSL, and the form handler all on one Cloudflare account, which means one less DNS handoff to break.
+
+The Cloudflare Workers Free plan caps at 100k requests/day — well above what a B2B security marketing page generates. If we ever hit that ceiling, it's a good problem and the upgrade is £5/month.
 
 ## Updating the page
 
@@ -96,15 +122,16 @@ After the initial deploy, every `git push` to `main` automatically rebuilds and 
 When a sign-up happens, the email looks like:
 
 > **Subject:** New audit lead — Acme Capital Ltd (50–199)
-> 
+>
 > Name: Sarah Chen
 > Email: sarah@acmecapital.co.uk
 > Company: Acme Capital Ltd
 > Headcount: 50-199
 > Submitted: 2026-05-03T14:22:18Z
+> Country: GB
 > ...
 
-Reply-to is set to the lead's email, so hitting reply in your inbox writes back to them directly.
+Reply-to is set to the lead's email, so hitting reply in your inbox writes back to them directly. Cloudflare's `CF-IPCountry` header is included so you can quickly spot leads worth prioritising (UK leads first, etc.).
 
 ## Anti-spam notes
 
@@ -114,7 +141,7 @@ The form has three layers of basic protection:
 - **Server-side validation** — re-checks everything; rejects malformed payloads with HTTP 400
 - **Honeypot field** — the API checks for a hidden `website` field; if present and non-empty, the request is silently treated as success but no email is sent (bots fill in every field they see)
 
-If real spam becomes a problem, the next layers to add are: Cloudflare Turnstile (free, invisible CAPTCHA), per-IP rate limiting via Vercel KV, or Cloudflare Workers in front of `/api/lead`.
+If real spam becomes a problem, the next layers to add are: Cloudflare Turnstile (free, invisible CAPTCHA — Cloudflare's own product, drops in cleanly), per-IP rate limiting via Cloudflare's Rate Limiting Rules, or a Workers KV-backed deduplication.
 
 ## Changing the design
 

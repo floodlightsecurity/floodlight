@@ -1,15 +1,16 @@
 /**
- * Floodlight — lead capture endpoint
+ * Floodlight — lead capture endpoint (Cloudflare Pages Function)
  *
  * Receives audit sign-up form submissions from the landing page, validates
  * the payload, and emails it to the team inbox via Resend.
  *
- * Required environment variables (set in Vercel dashboard):
+ * File location matters: this file's path `functions/api/lead.js` makes
+ * Cloudflare Pages route it as `POST /api/lead` automatically.
+ *
+ * Required environment variables (set in the Cloudflare Pages project):
  *   RESEND_API_KEY  — from https://resend.com/api-keys
  *   LEAD_TO_EMAIL   — the inbox to forward leads to (e.g. hello@floodlightsecurity.co)
  *   LEAD_FROM_EMAIL — must be a verified sender on Resend (e.g. leads@floodlightsecurity.co)
- *
- * To deploy on Vercel, place this file at api/lead.js in the project root.
  */
 
 const ALLOWED_ORIGINS = [
@@ -17,13 +18,13 @@ const ALLOWED_ORIGINS = [
   "https://www.floodlightsecurity.co",
   "http://localhost:3000",
   "http://localhost:8080",
+  "http://localhost:8788",
 ];
 
 const HEADCOUNT_VALID = new Set([
   "1-49", "50-199", "200-499", "500-999", "1000+",
 ]);
 
-// Block obvious freemail domains for "work email" — we want B2B leads
 const FREEMAIL_DOMAINS = new Set([
   "gmail.com", "yahoo.com", "hotmail.com", "outlook.com",
   "icloud.com", "aol.com", "live.com", "ymail.com",
@@ -52,30 +53,58 @@ function freemailDomain(email) {
   return FREEMAIL_DOMAINS.has(email.slice(at + 1).toLowerCase());
 }
 
-export default async function handler(req, res) {
-  // CORS
-  const origin = req.headers.origin || "";
-  if (ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+/**
+ * Standard CORS headers for the response. Cloudflare Pages doesn't set
+ * these automatically, so we add them on every response (including errors).
+ */
+function corsHeaders(origin) {
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
+  };
+}
 
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+function jsonResponse(status, body, origin) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeaders(origin),
+    },
+  });
+}
+
+// Cloudflare Pages: handle preflight
+export async function onRequestOptions({ request }) {
+  const origin = request.headers.get("Origin") || "";
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders(origin),
+  });
+}
+
+// Cloudflare Pages: handle the POST form submission
+export async function onRequestPost({ request, env }) {
+  const origin = request.headers.get("Origin") || "";
+
+  // Parse JSON body
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse(400, { error: "Invalid JSON" }, origin);
   }
 
-  // Parse body. Vercel auto-parses JSON when Content-Type is application/json.
-  const body = typeof req.body === "object" && req.body !== null ? req.body : {};
+  if (!body || typeof body !== "object") {
+    return jsonResponse(400, { error: "Invalid payload" }, origin);
+  }
 
-  // Honeypot — a hidden field on the form (added later if spam becomes a problem).
-  // For now, just check it's not present and non-empty.
+  // Honeypot — bot fills every field
   if (body.website) {
-    // Bot — pretend success to avoid signal
-    return res.status(200).json({ ok: true });
+    return jsonResponse(200, { ok: true }, origin);
   }
 
   const name = sanitiseString(body.name, 100);
@@ -83,7 +112,6 @@ export default async function handler(req, res) {
   const company = sanitiseString(body.company, 200);
   const headcount = sanitiseString(body.headcount, 16);
 
-  // Validation
   const errors = [];
   if (!name || name.length < 2) errors.push("name");
   if (!email || !validEmail(email)) errors.push("email");
@@ -91,24 +119,26 @@ export default async function handler(req, res) {
   if (!HEADCOUNT_VALID.has(headcount)) errors.push("headcount");
 
   if (errors.length > 0) {
-    return res.status(400).json({ error: "Invalid fields", fields: errors });
+    return jsonResponse(400, { error: "Invalid fields", fields: errors }, origin);
   }
 
-  // Soft-warn freemail (still accept — sometimes founders use personal emails)
   const isFreemail = freemailDomain(email);
 
-  // Check env config
-  const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.LEAD_TO_EMAIL;
-  const fromEmail = process.env.LEAD_FROM_EMAIL;
+  // Cloudflare Pages: env vars are on `env`, not process.env
+  const apiKey = env.RESEND_API_KEY;
+  const toEmail = env.LEAD_TO_EMAIL;
+  const fromEmail = env.LEAD_FROM_EMAIL;
   if (!apiKey || !toEmail || !fromEmail) {
-    console.error("Missing RESEND_API_KEY / LEAD_TO_EMAIL / LEAD_FROM_EMAIL");
-    return res.status(500).json({ error: "Server misconfigured" });
+    console.error("Missing env vars: RESEND_API_KEY / LEAD_TO_EMAIL / LEAD_FROM_EMAIL");
+    return jsonResponse(500, { error: "Server misconfigured" }, origin);
   }
 
   const submittedAt = new Date().toISOString();
-  const userAgent = req.headers["user-agent"] || "unknown";
-  const ip = req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "unknown";
+  const userAgent = request.headers.get("User-Agent") || "unknown";
+  const ip = request.headers.get("CF-Connecting-IP")
+    || request.headers.get("X-Forwarded-For")
+    || "unknown";
+  const country = request.headers.get("CF-IPCountry") || "unknown";
 
   const subject = `New audit lead — ${company} (${headcount})`;
   const textBody = [
@@ -120,6 +150,7 @@ export default async function handler(req, res) {
     `Headcount:  ${headcount}`,
     ``,
     `Submitted:  ${submittedAt}`,
+    `Country:    ${country}`,
     `IP:         ${ip}`,
     `User-Agent: ${userAgent}`,
   ].join("\n");
@@ -136,6 +167,7 @@ export default async function handler(req, res) {
       <hr style="border: none; border-top: 1px solid #eee; margin: 18px 0;" />
       <p style="font-size: 12px; color: #888; line-height: 1.5;">
         Submitted ${submittedAt}<br>
+        Country: ${escapeHtml(country)}<br>
         IP: ${escapeHtml(ip)}<br>
         UA: ${escapeHtml(userAgent)}
       </p>
@@ -162,12 +194,12 @@ export default async function handler(req, res) {
     if (!resendRes.ok) {
       const detail = await resendRes.text().catch(() => "");
       console.error("Resend rejected:", resendRes.status, detail);
-      return res.status(502).json({ error: "Email delivery failed" });
+      return jsonResponse(502, { error: "Email delivery failed" }, origin);
     }
 
-    return res.status(200).json({ ok: true });
+    return jsonResponse(200, { ok: true }, origin);
   } catch (err) {
-    console.error("Resend error:", err);
-    return res.status(502).json({ error: "Email delivery failed" });
+    console.error("Resend error:", err && err.message);
+    return jsonResponse(502, { error: "Email delivery failed" }, origin);
   }
 }
