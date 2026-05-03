@@ -1,0 +1,411 @@
+{
+  "audit_metadata": {
+    "customer_name": "Acme Capital Ltd",
+    "audit_period_start": "2026-04-26",
+    "audit_period_end": "2026-05-02",
+    "headcount_audited": 47,
+    "headcount_total": 52,
+    "report_generated_at": "2026-05-03T08:08:21.248706+00:00",
+    "report_id": "FL-2026-05-03-acme-capital",
+    "auditor": "Floodlight Security",
+    "industry": "Financial Services (FCA-regulated)",
+    "primary_jurisdiction": "United Kingdom"
+  },
+  "summary_stats": {
+    "total_events": 1847,
+    "navigation_events": 1392,
+    "paste_events": 455,
+    "distinct_tools_used": 19,
+    "distinct_users_active": 28,
+    "high_risk_events": 641,
+    "critical_risk_events": 24,
+    "events_with_sensitive_content": 128,
+    "code_paste_events": 62,
+    "credential_paste_events": 7
+  },
+  "tools_used": [
+    {
+      "name": "DeepSeek",
+      "category": "LLM_CHAT",
+      "risk_band": "CRITICAL",
+      "risk_score": 9,
+      "trains_on_input": "yes",
+      "events": 12,
+      "first_seen": "2026-04-26T10:50:49Z",
+      "last_seen": "2026-05-01T16:00:49Z",
+      "notes": "Hosted in China; subject to PRC data laws; corporate use strongly discouraged in regulated sectors",
+      "distinct_users": 2
+    },
+    {
+      "name": "Character.AI",
+      "category": "LLM_CHAT",
+      "risk_band": "CRITICAL",
+      "risk_score": 9,
+      "trains_on_input": "yes",
+      "events": 8,
+      "first_seen": "2026-04-26T17:26:19Z",
+      "last_seen": "2026-04-30T12:09:45Z",
+      "notes": "Persona chat platform; high PII risk",
+      "distinct_users": 1
+    },
+    {
+      "name": "Replika",
+      "category": "RISKY",
+      "risk_band": "CRITICAL",
+      "risk_score": 9,
+      "trains_on_input": "yes",
+      "events": 4,
+      "first_seen": "2026-04-27T06:56:30Z",
+      "last_seen": "2026-05-01T16:24:25Z",
+      "notes": "Companion AI; intimate personal content commonly shared",
+      "distinct_users": 1
+    },
+    {
+      "name": "ChatGPT",
+      "category": "LLM_CHAT",
+      "risk_band": "HIGH",
+      "risk_score": 7,
+      "trains_on_input": "yes",
+      "events": 612,
+      "first_seen": "2026-04-26T08:07:48Z",
+      "last_seen": "2026-05-02T17:57:05Z",
+      "notes": "Free/Plus tier detected — trains on inputs unless opted out",
+      "distinct_users": 28
+    },
+    {
+      "name": "Suno",
+      "category": "AUDIO",
+      "risk_band": "HIGH",
+      "risk_score": 7,
+      "trains_on_input": "yes",
+      "events": 6,
+      "first_seen": "2026-04-26T09:16:11Z",
+      "last_seen": "2026-05-01T23:21:05Z",
+      "notes": "Music generation; free tier outputs public",
+      "distinct_users": 2
+    },
+    {
+      "name": "Bolt.new",
+      "category": "CODE",
+      "risk_band": "HIGH",
+      "risk_score": 7,
+      "trains_on_input": "yes",
+      "events": 23,
+      "first_seen": "2026-04-27T00:45:23Z",
+      "last_seen": "2026-05-02T10:24:17Z",
+      "notes": "Generates whole apps; prompts and code may be used for improvement",
+      "distinct_users": 3
+    },
+    {
+      "name": "GitHub Copilot",
+      "category": "CODE",
+      "risk_band": "MEDIUM",
+      "risk_score": 6,
+      "trains_on_input": "configurable",
+      "events": 198,
+      "first_seen": "2026-04-26T08:11:47Z",
+      "last_seen": "2026-05-02T17:44:46Z",
+      "notes": "Individual tier may use prompts for training",
+      "distinct_users": 9
+    },
+    {
+      "name": "Perplexity AI",
+      "category": "SEARCH",
+      "risk_band": "MEDIUM",
+      "risk_score": 6,
+      "trains_on_input": "configurable",
+      "events": 156,
+      "first_seen": "2026-04-26T08:18:01Z",
+      "last_seen": "2026-05-02T15:34:42Z",
+      "notes": "Consumer tier retains queries for service improvement",
+      "distinct_users": 21
+    },
+    {
+      "name": "Microsoft Copilot",
+      "category": "LLM_CHAT",
+      "risk_band": "MEDIUM",
+      "risk_score": 6,
+      "trains_on_input": "configurable",
+      "events": 87,
+      "first_seen": "2026-04-26T10:19:40Z",
+      "last_seen": "2026-05-02T14:43:48Z",
+      "notes": "Consumer version detected — different policy from M365 Copilot",
+      "distinct_users": 16
+    },
+    {
+      "name": "Google Gemini",
+      "category": "LLM_CHAT",
+      "risk_band": "MEDIUM",
+      "risk_score": 6,
+      "trains_on_input": "configurable",
+      "events": 134,
+      "first_seen": "2026-04-26T11:07:19Z",
+      "last_seen": "2026-05-02T17:20:53Z",
+      "notes": "Consumer tier may use conversations for product improvement",
+      "distinct_users": 11
+    },
+    {
+      "name": "Midjourney",
+      "category": "IMAGE",
+      "risk_band": "MEDIUM",
+      "risk_score": 6,
+      "trains_on_input": "yes",
+      "events": 14,
+      "first_seen": "2026-04-26T19:39:54Z",
+      "last_seen": "2026-05-02T08:18:44Z",
+      "notes": "Default plans show outputs publicly",
+      "distinct_users": 3
+    },
+    {
+      "name": "Otter.ai",
+      "category": "MEETING",
+      "risk_band": "MEDIUM",
+      "risk_score": 5,
+      "trains_on_input": "no",
+      "events": 54,
+      "first_seen": "2026-04-26T08:02:19Z",
+      "last_seen": "2026-05-02T17:04:11Z",
+      "notes": "Auto-joining meetings; transcripts often shared widely",
+      "distinct_users": 6
+    },
+    {
+      "name": "Cursor",
+      "category": "CODE",
+      "risk_band": "MEDIUM",
+      "risk_score": 5,
+      "trains_on_input": "configurable",
+      "events": 98,
+      "first_seen": "2026-04-26T09:38:51Z",
+      "last_seen": "2026-05-02T14:10:17Z",
+      "notes": "Privacy Mode available but not enforced by default",
+      "distinct_users": 7
+    },
+    {
+      "name": "Grammarly",
+      "category": "WRITING",
+      "risk_band": "MEDIUM",
+      "risk_score": 5,
+      "trains_on_input": "yes",
+      "events": 78,
+      "first_seen": "2026-04-26T13:26:24Z",
+      "last_seen": "2026-05-02T17:52:58Z",
+      "notes": "Free/Premium tier retains content for up to 36 months",
+      "distinct_users": 13
+    },
+    {
+      "name": "v0 by Vercel",
+      "category": "CODE",
+      "risk_band": "MEDIUM",
+      "risk_score": 5,
+      "trains_on_input": "configurable",
+      "events": 4,
+      "first_seen": "2026-04-27T11:27:29Z",
+      "last_seen": "2026-05-02T01:09:59Z",
+      "notes": "Generates UI; team plans available",
+      "distinct_users": 2
+    },
+    {
+      "name": "Claude",
+      "category": "LLM_CHAT",
+      "risk_band": "LOW",
+      "risk_score": 3,
+      "trains_on_input": "no",
+      "events": 287,
+      "first_seen": "2026-04-26T08:07:43Z",
+      "last_seen": "2026-05-02T17:07:42Z",
+      "notes": "Does not train on user inputs by default",
+      "distinct_users": 14
+    },
+    {
+      "name": "Notion AI",
+      "category": "NOTE",
+      "risk_band": "LOW",
+      "risk_score": 3,
+      "trains_on_input": "no",
+      "events": 35,
+      "first_seen": "2026-04-26T12:30:33Z",
+      "last_seen": "2026-05-02T14:12:06Z",
+      "notes": "Bound to workspace DPA; does not train on customer data",
+      "distinct_users": 8
+    },
+    {
+      "name": "DeepL",
+      "category": "TRANSLATE",
+      "risk_band": "LOW",
+      "risk_score": 3,
+      "trains_on_input": "no",
+      "events": 28,
+      "first_seen": "2026-04-26T12:39:10Z",
+      "last_seen": "2026-05-02T17:28:23Z",
+      "notes": "GDPR-native; Pro plan does not store text",
+      "distinct_users": 9
+    },
+    {
+      "name": "Adobe Firefly",
+      "category": "IMAGE",
+      "risk_band": "LOW",
+      "risk_score": 2,
+      "trains_on_input": "no",
+      "events": 9,
+      "first_seen": "2026-04-26T21:42:34Z",
+      "last_seen": "2026-05-02T10:55:51Z",
+      "notes": "Trained on licensed/public-domain content; commercial-safe",
+      "distinct_users": 3
+    }
+  ],
+  "sensitive_events_summary": [
+    {
+      "category": "source_code",
+      "label": "Source code",
+      "count": 62,
+      "tools_seen_in": [
+        "Bolt.new",
+        "ChatGPT",
+        "Claude",
+        "Cursor",
+        "GitHub Copilot",
+        "v0 by Vercel"
+      ]
+    },
+    {
+      "category": "email",
+      "label": "Email address",
+      "count": 50,
+      "tools_seen_in": [
+        "ChatGPT",
+        "Claude",
+        "GitHub Copilot",
+        "Grammarly",
+        "Perplexity AI"
+      ]
+    },
+    {
+      "category": "uuid",
+      "label": "UUID (likely a database identifier)",
+      "count": 12,
+      "tools_seen_in": [
+        "ChatGPT",
+        "Claude",
+        "Cursor"
+      ]
+    },
+    {
+      "category": "phone_uk",
+      "label": "UK phone number",
+      "count": 7,
+      "tools_seen_in": [
+        "ChatGPT"
+      ]
+    },
+    {
+      "category": "ip_address",
+      "label": "IPv4 address",
+      "count": 6,
+      "tools_seen_in": [
+        "ChatGPT",
+        "GitHub Copilot"
+      ]
+    },
+    {
+      "category": "api_key_openai",
+      "label": "OpenAI API key",
+      "count": 3,
+      "tools_seen_in": [
+        "ChatGPT"
+      ]
+    },
+    {
+      "category": "iban",
+      "label": "IBAN (international bank account)",
+      "count": 2,
+      "tools_seen_in": [
+        "ChatGPT",
+        "Claude"
+      ]
+    },
+    {
+      "category": "credit_card",
+      "label": "Credit card number (16-digit pattern)",
+      "count": 1,
+      "tools_seen_in": [
+        "ChatGPT"
+      ]
+    },
+    {
+      "category": "jwt",
+      "label": "JSON Web Token",
+      "count": 1,
+      "tools_seen_in": [
+        "ChatGPT"
+      ]
+    }
+  ],
+  "high_concern_events": [
+    {
+      "timestamp": "2026-04-26T11:04:20Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "api_key_openai"
+      ],
+      "byte_count": 1423,
+      "user_pseudonym_short": "user-c049"
+    },
+    {
+      "timestamp": "2026-04-26T14:23:16Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "email",
+        "credit_card"
+      ],
+      "byte_count": 2786,
+      "user_pseudonym_short": "user-2e73"
+    },
+    {
+      "timestamp": "2026-04-29T12:45:19Z",
+      "tool": "Claude",
+      "categories": [
+        "iban"
+      ],
+      "byte_count": 3451,
+      "user_pseudonym_short": "user-fbaa"
+    },
+    {
+      "timestamp": "2026-04-30T19:53:36Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "jwt"
+      ],
+      "byte_count": 1672,
+      "user_pseudonym_short": "user-b790"
+    },
+    {
+      "timestamp": "2026-04-30T22:33:19Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "api_key_openai"
+      ],
+      "byte_count": 490,
+      "user_pseudonym_short": "user-8fb1"
+    },
+    {
+      "timestamp": "2026-05-01T05:19:17Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "api_key_openai"
+      ],
+      "byte_count": 2105,
+      "user_pseudonym_short": "user-5cb6"
+    },
+    {
+      "timestamp": "2026-05-01T19:48:24Z",
+      "tool": "ChatGPT",
+      "categories": [
+        "phone_uk",
+        "ip_address",
+        "iban"
+      ],
+      "byte_count": 3343,
+      "user_pseudonym_short": "user-c049"
+    }
+  ]
+}

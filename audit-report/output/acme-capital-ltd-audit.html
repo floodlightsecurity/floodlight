@@ -368,7 +368,7 @@
       <div class="cover-meta">
         <div class="cover-meta-item">
           <h4>Report ID</h4>
-          <p>FL-2026-05-03-acme</p>
+          <p>FL-2026-05-03-acme-capital</p>
         </div>
         <div class="cover-meta-item">
           <h4>Generated</h4>
@@ -406,30 +406,30 @@
     <h2>The headline finding</h2>
 
     <p class="lead">
-      Across 47 employees over 7 days, your team interacted with <strong>23 distinct AI tools</strong>. Of those, 6 are rated High or Critical risk by Floodlight's taxonomy &mdash; meaning they train on user inputs by default, are hosted in concerning jurisdictions, or both. The classifier observed <strong>67 paste events</strong> containing patterns that match sensitive content categories, including 4 pastes containing credentials and 41 containing source code.
+      Across 47 employees over 7 days, your team interacted with <strong>19 distinct AI tools</strong>. Of those, 6 are rated High or Critical risk by Floodlight's taxonomy &mdash; meaning they train on user inputs by default, are hosted in concerning jurisdictions, or both. The classifier observed <strong>128 paste events</strong> containing patterns that match sensitive content categories, including 7 pastes containing credentials and 62 containing source code.
     </p>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-num amber">23</div>
+        <div class="stat-num amber">19</div>
         <div class="stat-label">distinct AI tools observed</div>
       </div>
       <div class="stat">
-        <div class="stat-num">41</div>
+        <div class="stat-num">28</div>
         <div class="stat-label">of 47 employees active</div>
       </div>
       <div class="stat">
-        <div class="stat-num warn">89</div>
+        <div class="stat-num warn">641</div>
         <div class="stat-label">high-risk events recorded</div>
       </div>
       <div class="stat">
-        <div class="stat-num crit">12</div>
+        <div class="stat-num crit">24</div>
         <div class="stat-label">critical-risk events recorded</div>
       </div>
     </div>
 
     <h3>Tool risk distribution</h3>
-    <p>How the 23 observed tools split across Floodlight's risk bands.</p>
+    <p>How the 19 observed tools split across Floodlight's risk bands.</p>
     
     
     
@@ -453,7 +453,7 @@
     <div class="finding">
       <div class="finding-num">1</div>
       <div class="finding-body">
-        <h3>Investigate 4 credential pastes</h3>
+        <h3>Investigate 7 credential pastes</h3>
         <p><span class="finding-tag">Severity: critical</span><span class="finding-tag">Effort: low</span></p>
         <p>The classifier flagged pastes matching API key formats (OpenAI, AWS, GitHub, JWT) into ChatGPT and Cursor. Treat any matched key as compromised: rotate immediately and review the access logs for those credentials over the audit period.</p>
       </div>
@@ -544,16 +544,6 @@
         </tr>
         
         <tr class="row-HIGH">
-          <td class="tool-name">Bolt.new</td>
-          <td>Code</td>
-          <td><span class="risk risk-HIGH">HIGH</span></td>
-          <td class="num">23</td>
-          <td class="num">3</td>
-          <td>Yes</td>
-          <td class="notes">Generates whole apps; prompts and code may be used for improvement</td>
-        </tr>
-        
-        <tr class="row-HIGH">
           <td class="tool-name">Suno</td>
           <td>Audio</td>
           <td><span class="risk risk-HIGH">HIGH</span></td>
@@ -561,6 +551,16 @@
           <td class="num">2</td>
           <td>Yes</td>
           <td class="notes">Music generation; free tier outputs public</td>
+        </tr>
+        
+        <tr class="row-HIGH">
+          <td class="tool-name">Bolt.new</td>
+          <td>Code</td>
+          <td><span class="risk risk-HIGH">HIGH</span></td>
+          <td class="num">23</td>
+          <td class="num">3</td>
+          <td>Yes</td>
+          <td class="notes">Generates whole apps; prompts and code may be used for improvement</td>
         </tr>
         
         <tr class="row-MEDIUM">
@@ -578,19 +578,9 @@
           <td>Search</td>
           <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
           <td class="num">156</td>
-          <td class="num">22</td>
+          <td class="num">21</td>
           <td>Configurable</td>
           <td class="notes">Consumer tier retains queries for service improvement</td>
-        </tr>
-        
-        <tr class="row-MEDIUM">
-          <td class="tool-name">Google Gemini</td>
-          <td>Llm Chat</td>
-          <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
-          <td class="num">134</td>
-          <td class="num">11</td>
-          <td>Configurable</td>
-          <td class="notes">Consumer tier may use conversations for product improvement</td>
         </tr>
         
         <tr class="row-MEDIUM">
@@ -604,13 +594,33 @@
         </tr>
         
         <tr class="row-MEDIUM">
+          <td class="tool-name">Google Gemini</td>
+          <td>Llm Chat</td>
+          <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
+          <td class="num">134</td>
+          <td class="num">11</td>
+          <td>Configurable</td>
+          <td class="notes">Consumer tier may use conversations for product improvement</td>
+        </tr>
+        
+        <tr class="row-MEDIUM">
           <td class="tool-name">Midjourney</td>
           <td>Image</td>
           <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
           <td class="num">14</td>
-          <td class="num">4</td>
+          <td class="num">3</td>
           <td>Yes</td>
           <td class="notes">Default plans show outputs publicly</td>
+        </tr>
+        
+        <tr class="row-MEDIUM">
+          <td class="tool-name">Otter.ai</td>
+          <td>Meeting</td>
+          <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
+          <td class="num">54</td>
+          <td class="num">6</td>
+          <td>No</td>
+          <td class="notes">Auto-joining meetings; transcripts often shared widely</td>
         </tr>
         
         <tr class="row-MEDIUM">
@@ -631,16 +641,6 @@
           <td class="num">13</td>
           <td>Yes</td>
           <td class="notes">Free/Premium tier retains content for up to 36 months</td>
-        </tr>
-        
-        <tr class="row-MEDIUM">
-          <td class="tool-name">Otter.ai</td>
-          <td>Meeting</td>
-          <td><span class="risk risk-MEDIUM">MEDIUM</span></td>
-          <td class="num">54</td>
-          <td class="num">6</td>
-          <td>No</td>
-          <td class="notes">Auto-joining meetings; transcripts often shared widely</td>
         </tr>
         
         <tr class="row-MEDIUM">
@@ -678,7 +678,7 @@
           <td>Translate</td>
           <td><span class="risk risk-LOW">LOW</span></td>
           <td class="num">28</td>
-          <td class="num">11</td>
+          <td class="num">9</td>
           <td>No</td>
           <td class="notes">GDPR-native; Pro plan does not store text</td>
         </tr>
@@ -708,7 +708,7 @@
     <div class="section-eyebrow">§3 · Sensitive content events</div>
     <h2>What the local classifier flagged</h2>
     <p class="lead">
-      Each time an employee pastes content into an AI prompt field, Floodlight's classifier scans the paste locally on the endpoint for patterns that match 12 sensitive-content categories. Only the category labels and counts leave the device &mdash; <strong>the actual pasted content is never logged or transmitted</strong>. The numbers below reflect the classifier's pattern matches, not human-verified leaks.
+      Each time an employee pastes content into an AI prompt field, Floodlight's classifier scans the paste locally on the endpoint for patterns that match 9 sensitive-content categories. Only the category labels and counts leave the device &mdash; <strong>the actual pasted content is never logged or transmitted</strong>. The numbers below reflect the classifier's pattern matches, not human-verified leaks.
     </p>
 
     <h3>Categories observed</h3>
@@ -724,66 +724,48 @@
         
         <tr>
           <td><strong>Source code</strong> &nbsp;<code>source_code</code></td>
-          <td class="num">41</td>
-          <td class="notes">ChatGPT, Claude, GitHub Copilot, Cursor, Bolt.new, v0 by Vercel</td>
+          <td class="num">62</td>
+          <td class="notes">Bolt.new, ChatGPT, Claude, Cursor, GitHub Copilot, v0 by Vercel</td>
         </tr>
         
         <tr>
           <td><strong>Email address</strong> &nbsp;<code>email</code></td>
-          <td class="num">38</td>
-          <td class="notes">ChatGPT, Claude, GitHub Copilot, Perplexity AI, Grammarly</td>
-        </tr>
-        
-        <tr>
-          <td><strong>UK phone number</strong> &nbsp;<code>phone_uk</code></td>
-          <td class="num">9</td>
-          <td class="notes">ChatGPT, Grammarly</td>
+          <td class="num">50</td>
+          <td class="notes">ChatGPT, Claude, GitHub Copilot, Grammarly, Perplexity AI</td>
         </tr>
         
         <tr>
           <td><strong>UUID (likely a database identifier)</strong> &nbsp;<code>uuid</code></td>
-          <td class="num">7</td>
+          <td class="num">12</td>
           <td class="notes">ChatGPT, Claude, Cursor</td>
         </tr>
         
         <tr>
-          <td><strong>IPv4 address</strong> &nbsp;<code>ip_address</code></td>
-          <td class="num">5</td>
-          <td class="notes">ChatGPT, Claude, GitHub Copilot</td>
+          <td><strong>UK phone number</strong> &nbsp;<code>phone_uk</code></td>
+          <td class="num">7</td>
+          <td class="notes">ChatGPT</td>
         </tr>
         
         <tr>
-          <td><strong>IBAN (international bank account)</strong> &nbsp;<code>iban</code></td>
-          <td class="num">3</td>
-          <td class="notes">ChatGPT, Claude</td>
+          <td><strong>IPv4 address</strong> &nbsp;<code>ip_address</code></td>
+          <td class="num">6</td>
+          <td class="notes">ChatGPT, GitHub Copilot</td>
         </tr>
         
         <tr>
           <td><strong>OpenAI API key</strong> &nbsp;<code>api_key_openai</code></td>
+          <td class="num">3</td>
+          <td class="notes">ChatGPT</td>
+        </tr>
+        
+        <tr>
+          <td><strong>IBAN (international bank account)</strong> &nbsp;<code>iban</code></td>
           <td class="num">2</td>
-          <td class="notes">ChatGPT, Cursor</td>
+          <td class="notes">ChatGPT, Claude</td>
         </tr>
         
         <tr>
           <td><strong>Credit card number (16-digit pattern)</strong> &nbsp;<code>credit_card</code></td>
-          <td class="num">2</td>
-          <td class="notes">ChatGPT</td>
-        </tr>
-        
-        <tr>
-          <td><strong>GitHub token</strong> &nbsp;<code>api_key_github</code></td>
-          <td class="num">1</td>
-          <td class="notes">ChatGPT</td>
-        </tr>
-        
-        <tr>
-          <td><strong>AWS access key</strong> &nbsp;<code>api_key_aws</code></td>
-          <td class="num">1</td>
-          <td class="notes">ChatGPT</td>
-        </tr>
-        
-        <tr>
-          <td><strong>UK National Insurance number</strong> &nbsp;<code>uk_ni</code></td>
           <td class="num">1</td>
           <td class="notes">ChatGPT</td>
         </tr>
@@ -813,99 +795,59 @@
       <tbody>
         
         <tr>
-          <td><code>2026-04-29T15:42:11Z</code></td>
+          <td><code>2026-04-26T11:04:20Z</code></td>
           <td>ChatGPT</td>
-          <td><code>api_key_openai</code> <code>source_code</code></td>
-          <td class="num">1247</td>
-          <td><code>user-3a2f</code></td>
-        </tr>
-        
-        <tr>
-          <td><code>2026-04-30T11:14:22Z</code></td>
-          <td>ChatGPT</td>
-          <td><code>api_key_aws</code> <code>ip_address</code></td>
-          <td class="num">892</td>
-          <td><code>user-7b1c</code></td>
-        </tr>
-        
-        <tr>
-          <td><code>2026-04-30T16:22:08Z</code></td>
-          <td>Cursor</td>
           <td><code>api_key_openai</code></td>
-          <td class="num">456</td>
-          <td><code>user-3a2f</code></td>
+          <td class="num">1423</td>
+          <td><code>user-c049</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-01T09:33:14Z</code></td>
+          <td><code>2026-04-26T14:23:16Z</code></td>
           <td>ChatGPT</td>
-          <td><code>credit_card</code> <code>email</code></td>
-          <td class="num">234</td>
-          <td><code>user-9e4d</code></td>
+          <td><code>email</code> <code>credit_card</code></td>
+          <td class="num">2786</td>
+          <td><code>user-2e73</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-01T13:55:42Z</code></td>
-          <td>ChatGPT</td>
-          <td><code>uk_ni</code> <code>email</code></td>
-          <td class="num">312</td>
-          <td><code>user-2c8a</code></td>
-        </tr>
-        
-        <tr>
-          <td><code>2026-05-01T14:11:55Z</code></td>
-          <td>ChatGPT</td>
-          <td><code>iban</code> <code>phone_uk</code></td>
-          <td class="num">189</td>
-          <td><code>user-2c8a</code></td>
-        </tr>
-        
-        <tr>
-          <td><code>2026-05-02T10:42:33Z</code></td>
+          <td><code>2026-04-29T12:45:19Z</code></td>
           <td>Claude</td>
           <td><code>iban</code></td>
-          <td class="num">145</td>
-          <td><code>user-2c8a</code></td>
+          <td class="num">3451</td>
+          <td><code>user-fbaa</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-02T11:22:11Z</code></td>
+          <td><code>2026-04-30T19:53:36Z</code></td>
           <td>ChatGPT</td>
-          <td><code>jwt</code> <code>source_code</code></td>
-          <td class="num">1893</td>
-          <td><code>user-3a2f</code></td>
+          <td><code>jwt</code></td>
+          <td class="num">1672</td>
+          <td><code>user-b790</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-02T14:15:09Z</code></td>
+          <td><code>2026-04-30T22:33:19Z</code></td>
           <td>ChatGPT</td>
-          <td><code>api_key_github</code> <code>source_code</code></td>
-          <td class="num">2104</td>
-          <td><code>user-3a2f</code></td>
+          <td><code>api_key_openai</code></td>
+          <td class="num">490</td>
+          <td><code>user-8fb1</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-02T15:33:42Z</code></td>
+          <td><code>2026-05-01T05:19:17Z</code></td>
           <td>ChatGPT</td>
-          <td><code>credit_card</code></td>
-          <td class="num">67</td>
-          <td><code>user-9e4d</code></td>
+          <td><code>api_key_openai</code></td>
+          <td class="num">2105</td>
+          <td><code>user-5cb6</code></td>
         </tr>
         
         <tr>
-          <td><code>2026-05-02T16:42:11Z</code></td>
-          <td>Claude</td>
-          <td><code>iban</code> <code>email</code></td>
-          <td class="num">278</td>
-          <td><code>user-2c8a</code></td>
-        </tr>
-        
-        <tr>
-          <td><code>2026-05-02T17:11:55Z</code></td>
+          <td><code>2026-05-01T19:48:24Z</code></td>
           <td>ChatGPT</td>
-          <td><code>source_code</code> <code>ip_address</code></td>
-          <td class="num">3421</td>
-          <td><code>user-7b1c</code></td>
+          <td><code>phone_uk</code> <code>ip_address</code> <code>iban</code></td>
+          <td class="num">3343</td>
+          <td><code>user-c049</code></td>
         </tr>
         
       </tbody>
@@ -959,7 +901,7 @@
         <tr>
           <td><strong>Article 5(1)(f) &mdash; integrity and confidentiality</strong></td>
           <td>Personal data was pasted into AI tools that train on inputs by default.</td>
-          <td class="notes">51 pastes contained patterns matching personal data (email, UK phone, NI number, IBAN).</td>
+          <td class="notes">59 pastes contained patterns matching personal data (email, UK phone, NI number, IBAN).</td>
         </tr>
         <tr>
           <td><strong>Article 32 &mdash; security of processing</strong></td>
@@ -1087,7 +1029,7 @@
 
     <h3>Data collection</h3>
     <p>
-      During the audit period, the open-source Floodlight browser extension was deployed on participating employees' work browsers. The extension monitors a fixed list of 19+ AI tool domains (the full list is published in the extension's manifest). When an employee visits one of those domains, the extension records a navigation event. When an employee pastes content into a prompt-like field on one of those domains, the extension classifies the pasted content <strong>locally in the browser</strong> using a regex-based classifier covering 12+ categories, and emits a paste event containing only the category labels and match counts.
+      During the audit period, the open-source Floodlight browser extension was deployed on participating employees' work browsers. The extension monitors a fixed list of 19+ AI tool domains (the full list is published in the extension's manifest). When an employee visits one of those domains, the extension records a navigation event. When an employee pastes content into a prompt-like field on one of those domains, the extension classifies the pasted content <strong>locally in the browser</strong> using a regex-based classifier covering 9+ categories, and emits a paste event containing only the category labels and match counts.
     </p>
 
     <div class="callout">
