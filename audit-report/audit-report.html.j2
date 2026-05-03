@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <title>Floodlight Shadow AI Audit — {{ audit_metadata.customer_name }}</title>
+  <style>
+    /* ─────────────────────────────────────────────────────────────────
+       Print + screen styles. Same template renders to both.
+       ────────────────────────────────────────────────────────────── */
+    @page {
+      size: A4;
+      margin: 18mm 16mm 22mm 16mm;
+      @bottom-left  { content: "Floodlight Shadow AI Audit — {{ audit_metadata.customer_name }}"; font-size: 8pt; color: #888; font-family: 'Inter', sans-serif; }
+      @bottom-right { content: counter(page) " / " counter(pages); font-size: 8pt; color: #888; font-family: 'Inter', sans-serif; }
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --amber:        #BA7517;
+      --amber-soft:   #FAEEDA;
+      --ink:          #1A1A1A;
+      --ink-muted:    #4A4A48;
+      --ink-faint:    #888;
+      --bg:           #FFFFFF;
+      --bg-soft:      #F8F6F1;
+      --rule:         #E5E2D9;
+
+      --risk-low:      #3B6D11;
+      --risk-low-bg:   #EAF3DE;
+      --risk-med:      #854F0B;
+      --risk-med-bg:   #FAEEDA;
+      --risk-high:     #993C1D;
+      --risk-high-bg:  #FAECE7;
+      --risk-crit:     #A32D2D;
+      --risk-crit-bg:  #FCEBEB;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Screen wrapper — gives the page-like feel in browser. Stripped on print. */
+    .page {
+      max-width: 210mm;
+      margin: 0 auto 12mm;
+      padding: 18mm 16mm;
+      background: var(--bg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+      page-break-after: always;
+    }
+    @media screen {
+      .page { min-height: 261mm; }
+    }
+    .page:last-child { page-break-after: auto; }
+
+    @media print {
+      .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        max-width: none;
+        min-height: 0;
+      }
+      body { background: var(--bg); }
+    }
+
+    /* ─────────── Typography ─────────── */
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0;
+      color: var(--ink);
+    }
+    h1 { font-size: 28pt; line-height: 1.15; letter-spacing: -0.02em; }
+    h2 { font-size: 16pt; line-height: 1.2; margin-top: 18pt; margin-bottom: 6pt; }
+    h3 { font-size: 12pt; line-height: 1.3; margin-top: 14pt; margin-bottom: 4pt; }
+    h4 { font-size: 10pt; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 4pt; font-weight: 500; }
+    p { margin: 0 0 8pt; }
+    p.lead { font-size: 11.5pt; color: var(--ink-muted); line-height: 1.6; }
+    strong { font-weight: 600; }
+    code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9pt; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px; }
+    a { color: var(--amber); text-decoration: none; }
+
+    /* ─────────── Cover ─────────── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    @media screen {
+      .cover { min-height: 261mm; }
+    }
+    @media print {
+      .cover { min-height: 253mm; }
+    }
+    .cover-top { padding-top: 8mm; }
+    .cover-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 11pt;
+      letter-spacing: -0.005em;
+    }
+    .cover-mark-glyph {
+      width: 22px; height: 22px;
+      background: var(--amber);
+      color: white;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 4px;
+      font-size: 13pt;
+      font-weight: 700;
+    }
+    .cover-eyebrow {
+      font-size: 9.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--amber);
+      font-weight: 600;
+      margin: 36mm 0 6mm;
+    }
+    .cover h1 {
+      font-size: 36pt;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin-bottom: 10mm;
+      max-width: 165mm;
+    }
+    .cover-customer {
+      font-size: 18pt;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 2mm;
+    }
+    .cover-period {
+      font-size: 11pt;
+      color: var(--ink-muted);
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6mm 10mm;
+      padding-top: 14mm;
+      border-top: 0.5px solid var(--rule);
+      margin-top: auto;
+    }
+    .cover-meta-item h4 { margin-bottom: 2pt; }
+    .cover-meta-item p { font-size: 10pt; color: var(--ink); margin: 0; }
+    .cover-confidential {
+      margin-top: 10mm;
+      padding-top: 4mm;
+      font-size: 8.5pt;
+      color: var(--ink-faint);
+      border-top: 0.5px solid var(--rule);
+    }
+
+    /* ─────────── Risk badges ─────────── */
+    .risk {
+      display: inline-block;
+      padding: 1.5px 8px;
+      border-radius: 11px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .risk-LOW      { background: var(--risk-low-bg);  color: var(--risk-low); }
+    .risk-MEDIUM   { background: var(--risk-med-bg);  color: var(--risk-med); }
+    .risk-HIGH     { background: var(--risk-high-bg); color: var(--risk-high); }
+    .risk-CRITICAL { background: var(--risk-crit-bg); color: var(--risk-crit); }
+
+    /* ─────────── Stats row (hero numbers) ─────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4mm;
+      margin: 10mm 0 6mm;
+    }
+    .stat {
+      background: var(--bg-soft);
+      border-radius: 8px;
+      padding: 14pt 14pt 12pt;
+    }
+    .stat-num { font-size: 24pt; font-weight: 700; line-height: 1; letter-spacing: -0.025em; color: var(--ink); }
+    .stat-num.amber { color: var(--amber); }
+    .stat-num.warn  { color: var(--risk-high); }
+    .stat-num.crit  { color: var(--risk-crit); }
+    .stat-label { font-size: 9pt; color: var(--ink-muted); margin-top: 4pt; line-height: 1.35; }
+
+    /* ─────────── Tables ─────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 6pt 0 12pt;
+    }
+    th, td {
+      text-align: left;
+      padding: 7pt 8pt;
+      border-bottom: 0.5px solid var(--rule);
+      vertical-align: top;
+    }
+    th {
+      font-size: 8pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-faint);
+      border-bottom: 1px solid var(--rule);
+    }
+    tr:last-child td { border-bottom: none; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+    th.num { text-align: right; }
+    td.tool-name { font-weight: 500; }
+    td.notes { color: var(--ink-muted); font-size: 9pt; }
+
+    /* Risk-banded table rows: subtle left border indicating severity */
+    tr.row-CRITICAL td:first-child { border-left: 3px solid var(--risk-crit); padding-left: 9pt; }
+    tr.row-HIGH     td:first-child { border-left: 3px solid var(--risk-high); padding-left: 9pt; }
+    tr.row-MEDIUM   td:first-child { border-left: 3px solid var(--risk-med);  padding-left: 9pt; }
+    tr.row-LOW      td:first-child { border-left: 3px solid var(--risk-low);  padding-left: 9pt; }
+
+    /* ─────────── Callouts and panels ─────────── */
+    .callout {
+      background: var(--amber-soft);
+      border-left: 3px solid var(--amber);
+      padding: 10pt 14pt;
+      border-radius: 0 6px 6px 0;
+      margin: 8pt 0 12pt;
+      font-size: 10pt;
+    }
+    .callout strong { color: var(--ink); }
+    .panel {
+      background: var(--bg-soft);
+      padding: 10pt 14pt;
+      border-radius: 6px;
+      margin: 6pt 0 10pt;
+      font-size: 10pt;
+    }
+
+    /* ─────────── Risk distribution bar ─────────── */
+    .risk-bar {
+      display: flex;
+      width: 100%;
+      height: 9pt;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 6pt 0 4pt;
+    }
+    .risk-bar-segment { height: 100%; }
+    .risk-bar-segment.LOW      { background: var(--risk-low); }
+    .risk-bar-segment.MEDIUM   { background: var(--risk-med); }
+    .risk-bar-segment.HIGH     { background: var(--risk-high); }
+    .risk-bar-segment.CRITICAL { background: var(--risk-crit); }
+    .risk-bar-legend {
+      display: flex;
+      gap: 12pt;
+      font-size: 8.5pt;
+      color: var(--ink-muted);
+    }
+    .risk-bar-legend span { display: inline-flex; align-items: center; gap: 4pt; }
+    .risk-bar-legend i {
+      display: inline-block;
+      width: 8pt; height: 8pt;
+      border-radius: 2px;
+    }
+    .risk-bar-legend i.LOW      { background: var(--risk-low); }
+    .risk-bar-legend i.MEDIUM   { background: var(--risk-med); }
+    .risk-bar-legend i.HIGH     { background: var(--risk-high); }
+    .risk-bar-legend i.CRITICAL { background: var(--risk-crit); }
+
+    /* ─────────── Findings (numbered) ─────────── */
+    .finding {
+      display: grid;
+      grid-template-columns: 30pt 1fr;
+      gap: 0;
+      margin-bottom: 14pt;
+    }
+    .finding-num {
+      font-size: 22pt;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+    }
+    .finding-body h3 { margin-top: 0; }
+    .finding-body p { margin: 0 0 4pt; color: var(--ink-muted); }
+    .finding-tag {
+      display: inline-block;
+      padding: 1px 7pt;
+      border-radius: 3px;
+      font-size: 8pt;
+      font-weight: 500;
+      background: var(--bg-soft);
+      color: var(--ink-muted);
+      margin-right: 4pt;
+    }
+
+    /* ─────────── Recommendations ─────────── */
+    .rec {
+      border: 0.5px solid var(--rule);
+      border-radius: 6px;
+      padding: 12pt 14pt;
+      margin-bottom: 8pt;
+    }
+    .rec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4pt;
+    }
+    .rec-title { font-weight: 600; font-size: 10.5pt; }
+    .rec-effort {
+      font-size: 8.5pt;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+    .rec p { margin: 0; color: var(--ink-muted); font-size: 10pt; }
+
+    /* ─────────── Section header rule ─────────── */
+    .section-eyebrow {
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 4pt;
+    }
+
+    /* Hard page breaks where useful */
+    .page-break { page-break-before: always; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 1 — COVER
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page cover">
+    <div class="cover-top">
+      <div class="cover-mark">
+        <span class="cover-mark-glyph">F</span>
+        <span>Floodlight Security</span>
+      </div>
+
+      <div class="cover-eyebrow">Shadow AI Audit Report</div>
+      <h1>What your team is doing in the dark — and what to do about it.</h1>
+
+      <div class="cover-customer">{{ audit_metadata.customer_name }}</div>
+      <div class="cover-period">
+        Audit period: {{ audit_metadata.audit_period_start }} &nbsp;to&nbsp; {{ audit_metadata.audit_period_end }}
+      </div>
+    </div>
+
+    <div>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <h4>Report ID</h4>
+          <p>{{ audit_metadata.report_id }}</p>
+        </div>
+        <div class="cover-meta-item">
+          <h4>Generated</h4>
+          <p>{{ audit_metadata.report_generated_at[:10] }}</p>
+        </div>
+        <div class="cover-meta-item">
+          <h4>Headcount audited</h4>
+          <p>{{ audit_metadata.headcount_audited }} of {{ audit_metadata.headcount_total }} employees</p>
+        </div>
+        <div class="cover-meta-item">
+          <h4>Industry</h4>
+          <p>{{ audit_metadata.industry }}</p>
+        </div>
+        <div class="cover-meta-item">
+          <h4>Primary jurisdiction</h4>
+          <p>{{ audit_metadata.primary_jurisdiction }}</p>
+        </div>
+        <div class="cover-meta-item">
+          <h4>Prepared by</h4>
+          <p>{{ audit_metadata.auditor }}</p>
+        </div>
+      </div>
+
+      <div class="cover-confidential">
+        <strong>Confidential.</strong> Prepared for {{ audit_metadata.customer_name }}. Do not distribute outside the organisation without written permission. The contents reflect activity observed during the audit period and should be read alongside the methodology in §6.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 2 — EXECUTIVE SUMMARY
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§1 · Executive summary</div>
+    <h2>The headline finding</h2>
+
+    <p class="lead">
+      Across {{ audit_metadata.headcount_audited }} employees over {{ ((audit_metadata.audit_period_end | string) | length) and 7 }} days, your team interacted with <strong>{{ summary_stats.distinct_tools_used }} distinct AI tools</strong>. Of those, {{ tools_used | selectattr('risk_band', 'in', ['HIGH','CRITICAL']) | list | length }} are rated High or Critical risk by Floodlight's taxonomy &mdash; meaning they train on user inputs by default, are hosted in concerning jurisdictions, or both. The classifier observed <strong>{{ summary_stats.events_with_sensitive_content }} paste events</strong> containing patterns that match sensitive content categories, including {{ summary_stats.credential_paste_events }} pastes containing credentials and {{ summary_stats.code_paste_events }} containing source code.
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num amber">{{ summary_stats.distinct_tools_used }}</div>
+        <div class="stat-label">distinct AI tools observed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ summary_stats.distinct_users_active }}</div>
+        <div class="stat-label">of {{ audit_metadata.headcount_audited }} employees active</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num warn">{{ summary_stats.high_risk_events }}</div>
+        <div class="stat-label">high-risk events recorded</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num crit">{{ summary_stats.critical_risk_events }}</div>
+        <div class="stat-label">critical-risk events recorded</div>
+      </div>
+    </div>
+
+    <h3>Tool risk distribution</h3>
+    <p>How the {{ summary_stats.distinct_tools_used }} observed tools split across Floodlight's risk bands.</p>
+    {% set low_count = tools_used | selectattr('risk_band', 'equalto', 'LOW') | list | length %}
+    {% set med_count = tools_used | selectattr('risk_band', 'equalto', 'MEDIUM') | list | length %}
+    {% set high_count = tools_used | selectattr('risk_band', 'equalto', 'HIGH') | list | length %}
+    {% set crit_count = tools_used | selectattr('risk_band', 'equalto', 'CRITICAL') | list | length %}
+    {% set total = low_count + med_count + high_count + crit_count %}
+    <div class="risk-bar">
+      {% if low_count  %}<div class="risk-bar-segment LOW"      style="flex: {{ low_count }};"></div>{% endif %}
+      {% if med_count  %}<div class="risk-bar-segment MEDIUM"   style="flex: {{ med_count }};"></div>{% endif %}
+      {% if high_count %}<div class="risk-bar-segment HIGH"     style="flex: {{ high_count }};"></div>{% endif %}
+      {% if crit_count %}<div class="risk-bar-segment CRITICAL" style="flex: {{ crit_count }};"></div>{% endif %}
+    </div>
+    <div class="risk-bar-legend">
+      <span><i class="LOW"></i> {{ low_count }} low</span>
+      <span><i class="MEDIUM"></i> {{ med_count }} medium</span>
+      <span><i class="HIGH"></i> {{ high_count }} high</span>
+      <span><i class="CRITICAL"></i> {{ crit_count }} critical</span>
+    </div>
+
+    <h3 style="margin-top: 14pt;">Top three things to do this week</h3>
+
+    <div class="finding">
+      <div class="finding-num">1</div>
+      <div class="finding-body">
+        <h3>Investigate {{ summary_stats.credential_paste_events }} credential pastes</h3>
+        <p><span class="finding-tag">Severity: critical</span><span class="finding-tag">Effort: low</span></p>
+        <p>The classifier flagged pastes matching API key formats (OpenAI, AWS, GitHub, JWT) into ChatGPT and Cursor. Treat any matched key as compromised: rotate immediately and review the access logs for those credentials over the audit period.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-num">2</div>
+      <div class="finding-body">
+        <h3>Decide your stance on Critical-rated tools</h3>
+        <p><span class="finding-tag">Severity: high</span><span class="finding-tag">Effort: medium</span></p>
+        <p>{{ tools_used | selectattr('risk_band', 'equalto', 'CRITICAL') | list | length }} Critical-rated tools were used during the audit period: {% for t in tools_used if t.risk_band == 'CRITICAL' %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}. Each presents a defensible reason to block at the network layer or via endpoint policy. See §5 for category-by-category recommendations.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-num">3</div>
+      <div class="finding-body">
+        <h3>Document AI literacy obligations under EU AI Act Article 4</h3>
+        <p><span class="finding-tag">Severity: medium</span><span class="finding-tag">Effort: medium</span></p>
+        <p>Article 4 (AI literacy) has been in force since 2&nbsp;February 2025. As a deployer of AI systems, your organisation is required to take measures to ensure a sufficient level of AI literacy among staff. This audit, plus a written acceptable-use policy and training record, satisfies the demonstrable-effort threshold. See §4 for the full mapping.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 3 — TOOL INVENTORY
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§2 · Tool inventory</div>
+    <h2>Every AI tool observed, ranked by risk</h2>
+    <p class="lead">
+      The table below lists every distinct AI tool that one or more employees interacted with during the audit period. The risk band reflects Floodlight's published taxonomy (see §6 for methodology). Where a tool offers multiple tiers (e.g. ChatGPT Free vs Enterprise), the most-conservative tier is assumed unless an admin policy indicates otherwise.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Category</th>
+          <th>Risk</th>
+          <th class="num">Events</th>
+          <th class="num">Users</th>
+          <th>Trains on input</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set ordered_tools = tools_used | sort(attribute='risk_score', reverse=True) %}
+        {% for tool in ordered_tools %}
+        <tr class="row-{{ tool.risk_band }}">
+          <td class="tool-name">{{ tool.name }}</td>
+          <td>{{ tool.category | replace('_', ' ') | title }}</td>
+          <td><span class="risk risk-{{ tool.risk_band }}">{{ tool.risk_band }}</span></td>
+          <td class="num">{{ tool.events }}</td>
+          <td class="num">{{ tool.distinct_users }}</td>
+          <td>{{ tool.trains_on_input | title }}</td>
+          <td class="notes">{{ tool.notes }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Reading note.</strong> A tool appearing on this list does not, on its own, indicate a compliance breach or a security incident. It indicates the presence of an AI tool in your environment that warrants a governance decision. The recommendations in §5 propose three policy modes (block, allow, educate) you can apply per tool.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 4 — SENSITIVE CONTENT FINDINGS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§3 · Sensitive content events</div>
+    <h2>What the local classifier flagged</h2>
+    <p class="lead">
+      Each time an employee pastes content into an AI prompt field, Floodlight's classifier scans the paste locally on the endpoint for patterns that match {{ sensitive_events_summary | length }} sensitive-content categories. Only the category labels and counts leave the device &mdash; <strong>the actual pasted content is never logged or transmitted</strong>. The numbers below reflect the classifier's pattern matches, not human-verified leaks.
+    </p>
+
+    <h3>Categories observed</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th class="num">Pastes</th>
+          <th>Tools where observed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in sensitive_events_summary | sort(attribute='count', reverse=True) %}
+        <tr>
+          <td><strong>{{ entry.label }}</strong> &nbsp;<code>{{ entry.category }}</code></td>
+          <td class="num">{{ entry.count }}</td>
+          <td class="notes">{{ entry.tools_seen_in | join(', ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h3>High-concern events (chronological)</h3>
+    <p>Pastes flagged by the classifier as containing credentials, regulated identifiers, or financial account numbers. These warrant immediate triage.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th>Tool</th>
+          <th>Categories</th>
+          <th class="num">Bytes</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ev in high_concern_events %}
+        <tr>
+          <td><code>{{ ev.timestamp }}</code></td>
+          <td>{{ ev.tool }}</td>
+          <td>{% for c in ev.categories %}<code>{{ c }}</code>{% if not loop.last %} {% endif %}{% endfor %}</td>
+          <td class="num">{{ ev.byte_count }}</td>
+          <td><code>{{ ev.user_pseudonym_short }}</code></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="panel">
+      <strong>How to read the User column.</strong> Floodlight assigns each browser install a random pseudonym (a UUID stored only on the endpoint). The pseudonym identifies a device, not a human. To map a pseudonym to an employee, your IT admin can correlate against the assigned device inventory &mdash; deliberately a manual step to limit casual exposure.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 5 — REGULATORY MAPPING
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§4 · Regulatory mapping</div>
+    <h2>How these findings sit against the relevant regulations</h2>
+    <p class="lead">
+      For a UK-based organisation in financial services, four regulatory frameworks bear on shadow AI usage. The mapping below cites the specific obligation each finding touches.
+    </p>
+
+    <h3>EU AI Act &mdash; Regulation (EU) 2024/1689</h3>
+    <table>
+      <thead>
+        <tr><th>Obligation</th><th>Applies because</th><th>Evidence in this audit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Article 4 &mdash; AI literacy</strong><br><span class="notes">In force from 2 Feb 2025.</span></td>
+          <td>You are a deployer of AI systems (any third-party LLM or AI tool used by staff).</td>
+          <td class="notes">Use this audit + a written AUP + a training record to demonstrate the "sufficient level of AI literacy" measure required by the article.</td>
+        </tr>
+        <tr>
+          <td><strong>Article 5 &mdash; Prohibited AI practices</strong></td>
+          <td>None of the tools observed in this audit fall under Article 5 prohibitions.</td>
+          <td class="notes">Re-evaluate quarterly as new tools enter the environment.</td>
+        </tr>
+        <tr>
+          <td><strong>Articles 9, 10, 13 &mdash; High-risk system obligations</strong><br><span class="notes">In force from 2 Aug 2026.</span></td>
+          <td>If any AI tool is used to make decisions in scope of Annex III (e.g. credit scoring, employment), high-risk obligations attach.</td>
+          <td class="notes">Conduct an Annex III applicability review for {{ tools_used | selectattr('category', 'in', ['LLM_CHAT', 'AGENT']) | list | length }} chat/agent tools observed.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>UK GDPR &mdash; Regulation (EU) 2016/679 as retained</h3>
+    <table>
+      <thead>
+        <tr><th>Obligation</th><th>Applies because</th><th>Evidence in this audit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Article 5(1)(f) &mdash; integrity and confidentiality</strong></td>
+          <td>Personal data was pasted into AI tools that train on inputs by default.</td>
+          <td class="notes">{{ sensitive_events_summary | selectattr('category', 'in', ['email','phone_uk','uk_ni','iban']) | map(attribute='count') | sum }} pastes contained patterns matching personal data (email, UK phone, NI number, IBAN).</td>
+        </tr>
+        <tr>
+          <td><strong>Article 32 &mdash; security of processing</strong></td>
+          <td>Pasting personal data into a third-party processor that may train on it constitutes processing.</td>
+          <td class="notes">Review whether DPAs are in place with each tool's vendor; for tools without a DPA, restrict to non-personal-data use cases.</td>
+        </tr>
+        <tr>
+          <td><strong>Article 44 &mdash; international transfers</strong></td>
+          <td>{{ tools_used | selectattr('name', 'in', ['DeepSeek','Qwen / Tongyi','Kimi (Moonshot)','Kling AI']) | list | length }} tool(s) hosted in jurisdictions without an adequacy decision were used during the audit.</td>
+          <td class="notes">Transfers of personal data to these tools are unlawful absent appropriate safeguards (SCCs are unlikely to be effective for PRC-hosted services). Recommend immediate block.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>FCA &mdash; SYSC 6.1.1R &amp; Operational Resilience</h3>
+    <table>
+      <thead>
+        <tr><th>Obligation</th><th>Applies because</th><th>Evidence in this audit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SYSC 6.1.1R &mdash; adequate policies and procedures</strong></td>
+          <td>You are an FCA-authorised firm.</td>
+          <td class="notes">A written Acceptable Use Policy covering AI tools, alongside this audit, evidences adequate policy.</td>
+        </tr>
+        <tr>
+          <td><strong>SYSC 13 &mdash; outsourcing &amp; third-party risk</strong></td>
+          <td>AI tool usage is a form of third-party processing.</td>
+          <td class="notes">Each Medium-or-higher rated tool should appear on the third-party register or be blocked.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>ISO/IEC 42001:2023 &mdash; AI Management System</h3>
+    <p class="notes">Voluntary but increasingly expected by enterprise procurement. This audit produces evidence aligned with clauses 6.1.2 (AI risk assessment), 8.2 (operational planning), and Annex A controls A.5.2&ndash;A.5.5 (data, intended use, AI system impact assessment).</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 6 — RECOMMENDATIONS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§5 · Recommendations</div>
+    <h2>What to do, in priority order</h2>
+    <p class="lead">
+      Recommendations are ranked by impact-per-effort. The first two are intended to be completed within the week; the next four within the month; the last two are quarterly governance practices.
+    </p>
+
+    <h3>This week</h3>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R1 &mdash; Rotate all credentials matched in §3</span>
+        <span class="rec-effort">2&ndash;4 hours</span>
+      </div>
+      <p>Treat each API key and JWT in the high-concern events table as compromised. Rotate, invalidate sessions, and review access logs for the affected credentials over the audit period and the preceding 30 days.</p>
+    </div>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R2 &mdash; Block Critical-rated tools at the network layer</span>
+        <span class="rec-effort">1&ndash;2 hours</span>
+      </div>
+      <p>Block {% for t in tools_used if t.risk_band == 'CRITICAL' %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %} via your DNS filtering or secure web gateway. These tools either train on inputs and are hosted in concerning jurisdictions, or are designed for personal/intimate use that should not occur on corporate devices.</p>
+    </div>
+
+    <h3>This month</h3>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R3 &mdash; Publish a written AI Acceptable Use Policy</span>
+        <span class="rec-effort">1&ndash;2 days</span>
+      </div>
+      <p>Cover: which tools are sanctioned (and at which tiers), what data may never be pasted, the consequences of policy breach, and the contact for exception requests. Bind via existing employment contract or staff handbook.</p>
+    </div>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R4 &mdash; Upgrade ChatGPT users to Team or Enterprise</span>
+        <span class="rec-effort">1 week</span>
+      </div>
+      <p>The single highest-volume tool in this audit (ChatGPT, {{ (tools_used | selectattr('name', 'equalto', 'ChatGPT') | first).events }} events, {{ (tools_used | selectattr('name', 'equalto', 'ChatGPT') | first).distinct_users }} users) is being used on the Free or Plus tier, which trains on inputs by default. Team tier (£25/user/month at the time of writing) does not train on inputs and offers admin retention controls. ROI: a single sanctioned tier replaces dozens of policy exceptions.</p>
+    </div>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R5 &mdash; Roll out Floodlight in &ldquo;educate&rdquo; mode</span>
+        <span class="rec-effort">2&ndash;4 hours</span>
+      </div>
+      <p>Switch the extension's default policy from passive monitoring to "educate": when a high-concern paste is detected, the user sees a brief in-page popup explaining the risk before proceeding. This converts the audit's findings from retrospective reporting into prospective prevention without blocking productivity.</p>
+    </div>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R6 &mdash; Add AI tools to your third-party risk register</span>
+        <span class="rec-effort">1 day</span>
+      </div>
+      <p>Each Medium-or-higher rated tool should be listed in your third-party register with its DPA status, data-processing scope, and risk owner. This is required by FCA SYSC 13 and aligns with ISO 27001 A.15.</p>
+    </div>
+
+    <h3>Quarterly</h3>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R7 &mdash; Re-run the audit each quarter</span>
+        <span class="rec-effort">1 day per quarter</span>
+      </div>
+      <p>The AI vendor landscape changes weekly. New tools enter your environment, vendor policies change with new tiers, and certifications expire. A quarterly cadence catches drift before it becomes incident.</p>
+    </div>
+
+    <div class="rec">
+      <div class="rec-header">
+        <span class="rec-title">R8 &mdash; Conduct an EU AI Act Annex III applicability review</span>
+        <span class="rec-effort">1&ndash;2 days</span>
+      </div>
+      <p>Before 2 August 2026, identify any AI tool used in connection with Annex III activities (credit scoring, employment decisions, etc.). Tools used in those contexts inherit the high-risk obligations of Articles 9, 10, and 13.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAGE 7 — METHODOLOGY & DISCLOSURE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="page">
+    <div class="section-eyebrow">§6 · Methodology &amp; disclosure</div>
+    <h2>How this audit was conducted</h2>
+
+    <h3>Data collection</h3>
+    <p>
+      During the audit period, the open-source Floodlight browser extension was deployed on participating employees' work browsers. The extension monitors a fixed list of {{ tools_used | length }}+ AI tool domains (the full list is published in the extension's manifest). When an employee visits one of those domains, the extension records a navigation event. When an employee pastes content into a prompt-like field on one of those domains, the extension classifies the pasted content <strong>locally in the browser</strong> using a regex-based classifier covering {{ sensitive_events_summary | length }}+ categories, and emits a paste event containing only the category labels and match counts.
+    </p>
+
+    <div class="callout">
+      <strong>The privacy contract.</strong> Pasted text is never logged, transmitted, or stored. Only category labels and counts leave the endpoint. The extension is open-source and can be audited at <a>github.com/floodlightsecurity/floodlight</a>.
+    </div>
+
+    <h3>Risk scoring</h3>
+    <p>
+      Each tool in the taxonomy receives a numeric risk score (1&ndash;10) and a band (Low / Medium / High / Critical) based on four factors weighted in this order: (1) whether the tool trains on user inputs by default; (2) hosting jurisdiction and data sovereignty; (3) compliance certifications (SOC 2, ISO 27001, HIPAA-eligibility); (4) data retention defaults. The full methodology is published at <a>github.com/floodlightsecurity/floodlight/blob/main/data/RISK_METHODOLOGY.md</a>.
+    </p>
+
+    <h3>Limitations</h3>
+    <p>
+      This audit captures activity on managed browsers within the audit window. It does <em>not</em> capture: AI usage on personal/BYOD devices or mobile; AI features embedded in already-sanctioned platforms (M365 Copilot, Slack AI, Salesforce Einstein) which are inferred via their own audit logs and would require separate integration; native desktop AI applications that do not run in a browser. Closing those gaps requires DNS-level monitoring or MDM-based enforcement; both are roadmap items.
+    </p>
+
+    <h3>What this report is not</h3>
+    <p>
+      This is not a legal opinion on whether any specific tool's use complies with UK GDPR, the EU AI Act, or any other regulation in your specific operational context. Compliance turns on factors beyond the scope of monitoring &mdash; your DPA with the vendor, your legal basis under Article 6, the outcome of your DPIA, and so on. Treat this report as a starting point for a conversation with your DPO and legal team, not as a substitute for one.
+    </p>
+
+    <h3>Contact</h3>
+    <p>Prepared by Floodlight Security. For questions or corrections, reply to the email this report was attached to. For methodology issues or pull requests, see the public repository.</p>
+  </section>
+
+</body>
+</html>
